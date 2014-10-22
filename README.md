@@ -8,6 +8,7 @@ You configure it with a simple environment variable `CREDENTIALS` (the same JSON
 
 ```
 godep get
+export BASE_GUID=$(uuid)
 export CREDENTIALS='{"port": 4000}'
 export SERVICE_NAME=myservice
 export SERVICE_PLAN_NAME=shared
@@ -17,10 +18,20 @@ worlds-simplest-service-broker
 ## Deploy to Cloud Foundry
 
 ```
-cf push myservice-broker --no-start
-cf set-env myservice-broker CREDENTIALS '{"port": 4000}'
-cf set-env myservice-broker SERVICE_NAME myservice
-cf set-env myservice-broker SERVICE_PLAN_NAME shared
-cf env myservice-broker
-cf start myservice-broker
+export SERVICE=myservice
+export APPNAME=$SERVICE-broker
+cf push $APPNAME --no-start
+cf set-env $APPNAME BASE_GUID $(uuid)
+cf set-env $APPNAME CREDENTIALS '{"port": 4000}'
+cf set-env $APPNAME SERVICE_NAME $SERVICE
+cf set-env $APPNAME SERVICE_PLAN_NAME shared
+cf env $APPNAME
+cf start $APPNAME
+```
+
+To register the service broker (as an admin user):
+
+```
+cf create-service-broker $SERVICE admin admin https://$APPNAME.gotapaas.com
+cf enable-service-access $SERVICE
 ```

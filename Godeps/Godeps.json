@@ -3,9 +3,28 @@
 	"GoVersion": "go1.3.3",
 	"Deps": [
 		{
-			"ImportPath": "github.com/codegangsta/negroni",
-			"Comment": "v0.1-32-gc64702c",
-			"Rev": "c64702ca03d0f858ab7866638b69e85f0d4c6ee7"
+			"ImportPath": "github.com/codegangsta/inject",
+			"Comment": "v1.0-rc1-4-g4b81725",
+			"Rev": "4b8172520a03fa190f427bbd284db01b459bfce7"
+		},
+		{
+			"ImportPath": "github.com/go-martini/martini",
+			"Comment": "v1.0-52-gc842525",
+			"Rev": "c8425257dee954ab8b116b10ded3070821bcaec6"
+		},
+		{
+			"ImportPath": "github.com/intel-data/types-cf",
+			"Comment": "v1.3",
+			"Rev": "3b45cfff75a3be33a4d186470200bf6e645315e7"
+		},
+		{
+			"ImportPath": "github.com/kr/pretty",
+			"Comment": "go.weekly.2011-12-22-24-gf31442d",
+			"Rev": "f31442d60e51465c69811e2107ae978868dbea5c"
+		},
+		{
+			"ImportPath": "github.com/kr/text",
+			"Rev": "6807e777504f54ad073ecef66747de158294b639"
 		}
 	]
 }

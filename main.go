@@ -21,14 +21,16 @@ func brokerCatalog() (int, []byte) {
 	catalog := cf.Catalog{
 		Services: []*cf.Service{
 			{
-				ID:       baseGUID + "-service-" + serviceName,
-				Name:     serviceName,
-				Bindable: true,
+				ID:          baseGUID + "-service-" + serviceName,
+				Name:        serviceName,
+				Description: "Shared service for " + serviceName,
+				Bindable:    true,
 				Plans: []*cf.Plan{
 					{
-						ID:   baseGUID + "-plan-" + servicePlan,
-						Name: servicePlan,
-						Free: true,
+						ID:          baseGUID + "-plan-" + servicePlan,
+						Name:        servicePlan,
+						Description: "Shared service for " + serviceName,
+						Free:        true,
 					},
 				},
 			},
