@@ -15,7 +15,13 @@ func init() {
 	log.SetFlags(log.Ltime | log.Lshortfile)
 }
 
-var serviceName, servicePlan, serviceBindingCredentials, baseGUID string
+type serviceBindingResponse struct {
+	Credentials    map[string]interface{} `json:"credentials"`
+	SyslogDrainURL string                 `json:"syslog_drain_url"`
+}
+
+var serviceName, servicePlan, baseGUID string
+var serviceBinding serviceBindingResponse
 
 func brokerCatalog() (int, []byte) {
 	catalog := cf.Catalog{
@@ -51,12 +57,33 @@ func createServiceInstance(params martini.Params) (int, string) {
 	return 201, "{}"
 }
 
-func createServiceBinding(params martini.Params) (int, string) {
+func deleteServiceInstance(params martini.Params) (int, string) {
+	serviceID := params["service_id"]
+	fmt.Printf("Deleting service instance %s for service %s plan %s\n", serviceID, serviceName, servicePlan)
+	return 200, "{}"
+}
+
+func createServiceBinding(params martini.Params) (int, []byte) {
 	serviceID := params["service_id"]
 	serviceBindingID := params["binding_id"]
 	fmt.Printf("Creating service binding %s for service %s plan %s instance %s\n",
 		serviceBindingID, serviceName, servicePlan, serviceID)
-	return 201, serviceBindingCredentials
+
+	json, err := json.Marshal(serviceBinding)
+	if err != nil {
+		fmt.Println("Um, how did we fail to marshal this binding:")
+		fmt.Printf("%# v\n", pretty.Formatter(serviceBinding))
+		return 500, []byte{}
+	}
+	return 201, json
+}
+
+func deleteServiceBinding(params martini.Params) (int, string) {
+	serviceID := params["service_id"]
+	serviceBindingID := params["binding_id"]
+	fmt.Printf("Delete service binding %s for service %s plan %s instance %s\n",
+		serviceBindingID, serviceName, servicePlan, serviceID)
+	return 200, "{}"
 }
 
 func main() {
@@ -74,14 +101,18 @@ func main() {
 	if servicePlan == "" {
 		servicePlan = "shared"
 	}
-	serviceBindingCredentials = os.Getenv("CREDENTIALS")
-	if serviceBindingCredentials == "" {
-		serviceBindingCredentials = "{\"port\": 4000}"
+	credentials := os.Getenv("CREDENTIALS")
+	if credentials == "" {
+		credentials = "{\"port\": \"4000\"}"
 	}
+	json.Unmarshal([]byte(credentials), &serviceBinding.Credentials)
+	fmt.Printf("%# v\n", pretty.Formatter(serviceBinding))
 
 	m.Get("/v2/catalog", brokerCatalog)
 	m.Put("/v2/service_instances/:service_id", createServiceInstance)
+	m.Delete("/v2/service_instances/:service_id", deleteServiceInstance)
 	m.Put("/v2/service_instances/:service_id/service_bindings/:binding_id", createServiceBinding)
+	m.Delete("/v2/service_instances/:service_id/service_bindings/:binding_id", deleteServiceBinding)
 
 	m.Run()
 }
