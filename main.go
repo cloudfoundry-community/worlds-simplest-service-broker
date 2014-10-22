@@ -45,6 +45,12 @@ func brokerCatalog() (int, []byte) {
 	return 200, json
 }
 
+func createServiceInstance(params martini.Params) (int, string) {
+	serviceID := params["id"]
+	fmt.Printf("Creating service instance %s for service %s plan %s", serviceID, serviceName, servicePlan)
+	return 201, "{}"
+}
+
 func main() {
 	m := martini.Classic()
 
@@ -66,6 +72,7 @@ func main() {
 	}
 
 	m.Get("/v2/catalog", brokerCatalog)
+	m.Put("/v2/service_instances/:id", createServiceInstance)
 
 	m.Run()
 }
