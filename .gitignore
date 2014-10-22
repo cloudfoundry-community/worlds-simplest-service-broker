@@ -35,3 +35,5 @@ apps
 
 # gin
 gin-bin
+
+cf-ssh.yml
