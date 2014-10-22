@@ -1,7 +1,7 @@
 World's Simplest Service Broker
 ===============================
 
-If you have a shared service such as Hadoop where all applications will ultimately bind to the same service with the same credentials then you have found the service broker for you - the World's Simplest Service Broker.
+If you have a shared service such as Hadoop where all applications will ultimately bind to the same service with the same credentials then you have found the service broker for you - the World's Simplest Service Broker for Cloud Foundry.
 
 You configure it with a simple environment variable `CREDENTIALS` (the same JSON object that will be returned for all service bindings); and then register it as a service broker.
 
@@ -16,6 +16,15 @@ cf cs myservice some-service-name
 cf bs my-app some-service-name
 cf restage my-app
 ```
+
+Why not "user-provided services"?
+---------------------------------
+
+Cloud Foundry includes "user-provided services" (see `cf cups` in the CLI) for easy registration of existing external service credentials.
+
+The restriction for "cups" is that it is limited to the Space into which it was registered. For each organization/space, the `cf cups` command needs to be run. That is, when you create a new space, it does not immediately have access to the credentials for the service.
+
+Instead, with the World's Simplest Service Broker you can make the credentials easily and instantly available to all organizations' spaces.
 
 Build locally
 -------------
