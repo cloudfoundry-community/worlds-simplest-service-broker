@@ -44,7 +44,7 @@ Deploy to Cloud Foundry
 ```
 export SERVICE=myservice
 export APPNAME=$SERVICE-broker
-cf push $APPNAME --no-start
+cf push $APPNAME --no-start -m 128M -k 256M
 cf set-env $APPNAME BASE_GUID $(uuid)
 cf set-env $APPNAME CREDENTIALS '{"port": "4000", "host": "1.2.3.4"}'
 cf set-env $APPNAME SERVICE_NAME $SERVICE
