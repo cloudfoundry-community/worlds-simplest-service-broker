@@ -6,8 +6,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/cloudfoundry-community/types-cf"
 	"github.com/go-martini/martini"
-	"github.com/intel-data/types-cf"
 	"github.com/kr/pretty"
 )
 
