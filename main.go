@@ -46,9 +46,17 @@ func brokerCatalog() (int, []byte) {
 }
 
 func createServiceInstance(params martini.Params) (int, string) {
-	serviceID := params["id"]
-	fmt.Printf("Creating service instance %s for service %s plan %s", serviceID, serviceName, servicePlan)
+	serviceID := params["service_id"]
+	fmt.Printf("Creating service instance %s for service %s plan %s\n", serviceID, serviceName, servicePlan)
 	return 201, "{}"
+}
+
+func createServiceBinding(params martini.Params) (int, string) {
+	serviceID := params["service_id"]
+	serviceBindingID := params["binding_id"]
+	fmt.Printf("Creating service binding %s for service %s plan %s instance %s\n",
+		serviceBindingID, serviceName, servicePlan, serviceID)
+	return 201, serviceBindingCredentials
 }
 
 func main() {
@@ -68,11 +76,12 @@ func main() {
 	}
 	serviceBindingCredentials = os.Getenv("CREDENTIALS")
 	if serviceBindingCredentials == "" {
-		serviceBindingCredentials = "{}"
+		serviceBindingCredentials = "{\"port\": 4000}"
 	}
 
 	m.Get("/v2/catalog", brokerCatalog)
-	m.Put("/v2/service_instances/:id", createServiceInstance)
+	m.Put("/v2/service_instances/:service_id", createServiceInstance)
+	m.Put("/v2/service_instances/:service_id/service_bindings/:binding_id", createServiceBinding)
 
 	m.Run()
 }
