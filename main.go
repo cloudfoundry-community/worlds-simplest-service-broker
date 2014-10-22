@@ -1,34 +1,69 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 
-	"github.com/codegangsta/negroni"
+	"github.com/go-martini/martini"
+	"github.com/intel-data/types-cf"
+	"github.com/kr/pretty"
 )
 
 func init() {
 	log.SetFlags(log.Ltime | log.Lshortfile)
 }
 
-func main() {
-	mux := http.NewServeMux()
+var serviceName, servicePlan, serviceBindingCredentials, baseGUID string
 
-	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		fmt.Fprint(w, "Hello World!")
-	})
-
-	n := negroni.Classic()
-
-	// Handler goes last
-	n.UseHandler(mux)
-
-	// Serve
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "3000"
+func brokerCatalog() (int, []byte) {
+	catalog := cf.Catalog{
+		Services: []*cf.Service{
+			{
+				ID:       baseGUID + "-service-" + serviceName,
+				Name:     serviceName,
+				Bindable: true,
+				Plans: []*cf.Plan{
+					{
+						ID:   baseGUID + "-plan-" + servicePlan,
+						Name: servicePlan,
+						Free: true,
+					},
+				},
+			},
+		},
 	}
-	n.Run(":" + port)
+	json, err := json.Marshal(catalog)
+	if err != nil {
+		fmt.Println("Um, how did we fail to marshal this catalog:")
+		fmt.Printf("%# v\n", pretty.Formatter(catalog))
+		return 500, []byte{}
+	}
+	return 200, json
+}
+
+func main() {
+	m := martini.Classic()
+
+	baseGUID = os.Getenv("BASE_GUID")
+	if baseGUID == "" {
+		baseGUID = "29140B3F-0E69-4C7E-8A35"
+	}
+	serviceName = os.Getenv("SERVICE_NAME")
+	if serviceName == "" {
+		serviceName = "some-service-name" // replace with cfenv.AppName
+	}
+	servicePlan = os.Getenv("SERVICE_PLAN")
+	if servicePlan == "" {
+		servicePlan = "shared"
+	}
+	serviceBindingCredentials = os.Getenv("CREDENTIALS")
+	if serviceBindingCredentials == "" {
+		serviceBindingCredentials = "{}"
+	}
+
+	m.Get("/v2/catalog", brokerCatalog)
+
+	m.Run()
 }
