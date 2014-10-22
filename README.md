@@ -1,10 +1,12 @@
-# World's Simplest Service Broker
+World's Simplest Service Broker
+===============================
 
 If you have a shared service such as Hadoop where all applications will ultimately bind to the same service with the same credentials then you have found the service broker for you - the World's Simplest Service Broker.
 
 You configure it with a simple environment variable `CREDENTIALS` (the same JSON object that will be returned for all service bindings); and then register it as a service broker.
 
-## Build locally
+Build locally
+-------------
 
 ```
 godep get
@@ -15,7 +17,8 @@ export SERVICE_PLAN_NAME=shared
 worlds-simplest-service-broker
 ```
 
-## Deploy to Cloud Foundry
+Deploy to Cloud Foundry
+-----------------------
 
 ```
 export SERVICE=myservice
