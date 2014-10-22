@@ -5,6 +5,18 @@ If you have a shared service such as Hadoop where all applications will ultimate
 
 You configure it with a simple environment variable `CREDENTIALS` (the same JSON object that will be returned for all service bindings); and then register it as a service broker.
 
+All services created and all service bindings will be given the same set of credentials. Definitely the simplest thing that could work.
+
+As the admin of a service sharing it via a service broker - see section [Deploy to Cloud Foundry](#deploy-to-cloud-foundry) for setup.
+
+As a user of the broker:
+
+```
+cf cs myservice some-service-name
+cf bs my-app some-service-name
+cf restage my-app
+```
+
 Build locally
 -------------
 
