@@ -1,0 +1,5 @@
+{
+	"ImportPath": "github.com/cloudfoundry-community/worlds-simplest-service-broker",
+	"GoVersion": "go1.3.3",
+	"Deps": []
+}
