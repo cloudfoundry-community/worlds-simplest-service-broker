@@ -56,7 +56,8 @@ cf start $APPNAME
 To register the service broker (as an admin user):
 
 ```
-cf create-service-broker $SERVICE admin admin https://$APPNAME.gotapaas.com
+export SERVICE_URL=$(cf app $APPNAME | grep urls: | awk '{print $2}')
+cf create-service-broker $SERVICE admin admin https://$SERVICE_URL
 cf enable-service-access $SERVICE
 ```
 
