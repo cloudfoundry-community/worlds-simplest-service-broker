@@ -35,6 +35,7 @@ export BASE_GUID=$(uuid)
 export CREDENTIALS='{"port": "4000", "host": "1.2.3.4"}'
 export SERVICE_NAME=myservice
 export SERVICE_PLAN_NAME=shared
+export TAGS=simple,shared
 worlds-simplest-service-broker
 ```
 
@@ -49,6 +50,7 @@ cf set-env $APPNAME BASE_GUID $(uuid)
 cf set-env $APPNAME CREDENTIALS '{"port": "4000", "host": "1.2.3.4"}'
 cf set-env $APPNAME SERVICE_NAME $SERVICE
 cf set-env $APPNAME SERVICE_PLAN_NAME shared
+cf set-env $APPNAME TAGS simple,shared
 cf env $APPNAME
 cf start $APPNAME
 ```

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/cloudfoundry-community/types-cf"
 	"github.com/go-martini/martini"
@@ -20,10 +21,14 @@ type serviceBindingResponse struct {
 	SyslogDrainURL string                 `json:"syslog_drain_url"`
 }
 
-var serviceName, servicePlan, baseGUID string
+var serviceName, servicePlan, baseGUID, tags string
 var serviceBinding serviceBindingResponse
 
 func brokerCatalog() (int, []byte) {
+	tagArray := []string{}
+	if len(tags) > 0 {
+		tagArray = strings.Split(tags, ",")
+	}
 	catalog := cf.Catalog{
 		Services: []*cf.Service{
 			{
@@ -31,6 +36,7 @@ func brokerCatalog() (int, []byte) {
 				Name:        serviceName,
 				Description: "Shared service for " + serviceName,
 				Bindable:    true,
+				Tags:        tagArray,
 				Plans: []*cf.Plan{
 					{
 						ID:          baseGUID + "-plan-" + servicePlan,
@@ -104,6 +110,10 @@ func main() {
 	credentials := os.Getenv("CREDENTIALS")
 	if credentials == "" {
 		credentials = "{\"port\": \"4000\"}"
+	}
+	tags = os.Getenv("TAGS")
+	if tags == "" {
+		tags = ""
 	}
 	json.Unmarshal([]byte(credentials), &serviceBinding.Credentials)
 	fmt.Printf("%# v\n", pretty.Formatter(serviceBinding))
