@@ -1,7 +1,12 @@
 {
 	"ImportPath": "github.com/cloudfoundry-community/worlds-simplest-service-broker",
-	"GoVersion": "go1.3.3",
+	"GoVersion": "go1.4",
 	"Deps": [
+		{
+			"ImportPath": "github.com/cloudfoundry-community/go-cfenv",
+			"Comment": "v1.3-15-gdb26cf7",
+			"Rev": "db26cf7b4a1a562641392e8455975dda9f0f90d0"
+		},
 		{
 			"ImportPath": "github.com/cloudfoundry-community/types-cf",
 			"Comment": "v1.3",
@@ -25,6 +30,10 @@
 		{
 			"ImportPath": "github.com/kr/text",
 			"Rev": "6807e777504f54ad073ecef66747de158294b639"
+		},
+		{
+			"ImportPath": "github.com/mitchellh/mapstructure",
+			"Rev": "740c764bc6149d3f1806231418adb9f52c11bcbf"
 		}
 	]
 }

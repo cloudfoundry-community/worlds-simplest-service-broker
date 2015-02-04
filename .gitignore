@@ -25,6 +25,7 @@ _testmain.go
 
 # bin
 worlds-simplest-service-broker
+Godeps/_workspace
 
 # Sublime
 broker.sublime-project

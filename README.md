@@ -73,3 +73,7 @@ cf restart $APPNAME
 ```
 
 Each application will need rebind and restart/restage to get the new credentials.
+
+### Dashboard
+
+Each service instance is assigned the same dashboard URL - `/dashboard`.
