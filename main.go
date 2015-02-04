@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/cloudfoundry-community/go-cfenv"
 	"github.com/cloudfoundry-community/types-cf"
 	"github.com/go-martini/martini"
 	"github.com/kr/pretty"
@@ -15,6 +16,10 @@ func init() {
 	log.SetFlags(log.Ltime | log.Lshortfile)
 }
 
+type serviceInstanceResponse struct {
+	DashboardURL string `json:"dashboard_url"`
+}
+
 type serviceBindingResponse struct {
 	Credentials    map[string]interface{} `json:"credentials"`
 	SyslogDrainURL string                 `json:"syslog_drain_url"`
@@ -22,6 +27,7 @@ type serviceBindingResponse struct {
 
 var serviceName, servicePlan, baseGUID string
 var serviceBinding serviceBindingResponse
+var appURL string
 
 func brokerCatalog() (int, []byte) {
 	catalog := cf.Catalog{
@@ -51,10 +57,18 @@ func brokerCatalog() (int, []byte) {
 	return 200, json
 }
 
-func createServiceInstance(params martini.Params) (int, string) {
+func createServiceInstance(params martini.Params) (int, []byte) {
 	serviceID := params["service_id"]
 	fmt.Printf("Creating service instance %s for service %s plan %s\n", serviceID, serviceName, servicePlan)
-	return 201, "{}"
+
+	instance := serviceInstanceResponse{DashboardURL: fmt.Sprintf("%s/dashboard", appURL)}
+	json, err := json.Marshal(instance)
+	if err != nil {
+		fmt.Println("Um, how did we fail to marshal this service instance:")
+		fmt.Printf("%# v\n", pretty.Formatter(instance))
+		return 500, []byte{}
+	}
+	return 201, json
 }
 
 func deleteServiceInstance(params martini.Params) (int, string) {
@@ -112,6 +126,14 @@ func main() {
 	}
 	json.Unmarshal([]byte(credentials), &serviceBinding.Credentials)
 	fmt.Printf("%# v\n", pretty.Formatter(serviceBinding))
+
+	appEnv, err := cfenv.Current()
+	if err == nil {
+		appURL = fmt.Sprintf("https://%s", appEnv.ApplicationUri[0])
+	} else {
+		appURL = "http://localhost:5000"
+	}
+	fmt.Println("Running as", appURL)
 
 	// Cloud Foundry Service API
 	m.Get("/v2/catalog", brokerCatalog)
