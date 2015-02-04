@@ -86,6 +86,11 @@ func deleteServiceBinding(params martini.Params) (int, string) {
 	return 200, "{}"
 }
 
+func showServiceInstanceDashboard(params martini.Params) (int, string) {
+	fmt.Printf("Show dashboard for service %s plan %s\n", serviceName, servicePlan)
+	return 200, "Dashboard"
+}
+
 func main() {
 	m := martini.Classic()
 
@@ -108,11 +113,15 @@ func main() {
 	json.Unmarshal([]byte(credentials), &serviceBinding.Credentials)
 	fmt.Printf("%# v\n", pretty.Formatter(serviceBinding))
 
+	// Cloud Foundry Service API
 	m.Get("/v2/catalog", brokerCatalog)
 	m.Put("/v2/service_instances/:service_id", createServiceInstance)
 	m.Delete("/v2/service_instances/:service_id", deleteServiceInstance)
 	m.Put("/v2/service_instances/:service_id/service_bindings/:binding_id", createServiceBinding)
 	m.Delete("/v2/service_instances/:service_id/service_bindings/:binding_id", deleteServiceBinding)
+
+	// Service Instance Dashboard
+	m.Get("/dashboard", showServiceInstanceDashboard)
 
 	m.Run()
 }
