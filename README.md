@@ -77,3 +77,11 @@ Each application will need rebind and restart/restage to get the new credentials
 ### Dashboard
 
 Each service instance is assigned the same dashboard URL - `/dashboard`.
+
+### Image URL
+
+Adding image url to service broker
+
+```
+cf set-env $APPNAME IMAGE_URL '<image url>'
+```
