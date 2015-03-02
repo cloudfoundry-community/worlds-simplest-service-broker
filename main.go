@@ -26,7 +26,7 @@ type serviceBindingResponse struct {
 	SyslogDrainURL string                 `json:"syslog_drain_url"`
 }
 
-var serviceName, servicePlan, baseGUID, tags string
+var serviceName, servicePlan, baseGUID, tags, imageURL string
 var serviceBinding serviceBindingResponse
 var appURL string
 
@@ -43,6 +43,10 @@ func brokerCatalog() (int, []byte) {
 				Description: "Shared service for " + serviceName,
 				Bindable:    true,
 				Tags:        tagArray,
+				Metadata: &cf.ServiceMeta{
+					DisplayName: serviceName,
+					ImageURL:    imageURL,
+				},
 				Plans: []*cf.Plan{
 					{
 						ID:          baseGUID + "-plan-" + servicePlan,
@@ -131,9 +135,8 @@ func main() {
 		credentials = "{\"port\": \"4000\"}"
 	}
 	tags = os.Getenv("TAGS")
-	if tags == "" {
-		tags = ""
-	}
+	imageURL = os.Getenv("IMAGE_URL")
+
 	json.Unmarshal([]byte(credentials), &serviceBinding.Credentials)
 	fmt.Printf("%# v\n", pretty.Formatter(serviceBinding))
 
