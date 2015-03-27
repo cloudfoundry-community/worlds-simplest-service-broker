@@ -20,20 +20,3 @@ _cgo_export.*
 _testmain.go
 
 *.exe
-*.test
-*.prof
-
-# bin
-worlds-simplest-service-broker
-
-# Sublime
-broker.sublime-project
-broker.sublime-workspace
-
-# src
-apps
-
-# gin
-gin-bin
-
-cf-ssh.yml
