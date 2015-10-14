@@ -20,9 +20,3 @@ func Test_SetENV(t *testing.T) {
 		}
 	}
 }
-
-func Test_Root(t *testing.T) {
-	if len(Root) == 0 {
-		t.Errorf("Expected root path will be set")
-	}
-}

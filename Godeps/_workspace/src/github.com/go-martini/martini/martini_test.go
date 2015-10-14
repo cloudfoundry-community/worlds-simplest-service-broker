@@ -27,12 +27,8 @@ func Test_New(t *testing.T) {
 	}
 }
 
-func Test_Martini_RunOnAddr(t *testing.T) {
-	// just test that Run doesn't bomb
-	go New().RunOnAddr("127.0.0.1:8080")
-}
-
 func Test_Martini_Run(t *testing.T) {
+	// just test that Run doesn't bomb
 	go New().Run()
 }
 
