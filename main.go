@@ -130,6 +130,9 @@ func main() {
 	if servicePlan == "" {
 		servicePlan = "shared"
 	}
+
+	serviceBinding.SyslogDrainURL = os.Getenv("SYSLOG_DRAIN_URL")
+
 	credentials := os.Getenv("CREDENTIALS")
 	if credentials == "" {
 		credentials = "{\"port\": \"4000\"}"
@@ -142,7 +145,7 @@ func main() {
 
 	appEnv, err := cfenv.Current()
 	if err == nil {
-		appURL = fmt.Sprintf("https://%s", appEnv.ApplicationUri[0])
+		appURL = fmt.Sprintf("https://%s", appEnv.ApplicationURIs[0])
 	} else {
 		appURL = "http://localhost:5000"
 	}

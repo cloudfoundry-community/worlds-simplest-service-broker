@@ -74,6 +74,14 @@ cf restart $APPNAME
 
 Each application will need rebind and restart/restage to get the new credentials.
 
+### syslog_drain_url
+
+The broker can advertise a `syslog_drain_url` endpoint with the `$SYSLOG_DRAIN_URL` variable:
+
+```
+cf set-env $APPNAME SYSLOG_DRAIN_URL 'syslog://1.2.3.4:514'
+```
+
 ### Dashboard
 
 Each service instance is assigned the same dashboard URL - `/dashboard`.

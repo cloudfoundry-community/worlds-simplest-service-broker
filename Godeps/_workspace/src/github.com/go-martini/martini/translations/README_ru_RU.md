@@ -30,7 +30,7 @@ go get github.com/go-martini/martini
 go run server.go
 ~~~
 
-И вы получите запущенный Martini сервер на `localhost:3000`.
+И вы получите запущеный Martini сервер на `localhost:3000`.
 
 ## Помощь
 
@@ -44,11 +44,11 @@ GoDoc [документация](http://godoc.org/github.com/go-martini/martini)
 
 
 ## Возможности
-* Очень прост в использовании.
+* Экстримально простой в использовании.
 * Ненавязчивый дизайн.
-* Хорошо сочетается с другими пакетами.
+* Хорошо сочитается с другими пакетами.
 * Потрясающий роутинг и маршрутизация.
-* Модульный дизайн - легко добавлять и исключать функциональность.
+* Модульный дизайн - легко добавлять функциональность, легко исключать.
 * Большое количество хороших обработчиков/middlewares, готовых к использованию.
 * Отличный набор 'из коробки'.
 * **Полностью совместим с интерфейсом [http.HandlerFunc](http://godoc.org/net/http#HandlerFunc).**
@@ -68,7 +68,7 @@ GoDoc [документация](http://godoc.org/github.com/go-martini/martini)
 * [FAQ](#faq)
 
 ## Classic Martini
-Для быстрого старта [martini.Classic()](http://godoc.org/github.com/go-martini/martini#Classic) предлагает несколько предустановок, это используется для большинства веб приложений:
+Для быстрого старта [martini.Classic()](http://godoc.org/github.com/go-martini/martini#Classic) предлагает несколько обоснованных предустановок, это работает для большинства веб приложений:
 ~~~ go
   m := martini.Classic()
   // ... middleware и роутинг здесь
@@ -83,7 +83,7 @@ GoDoc [документация](http://godoc.org/github.com/go-martini/martini)
   * Роутинг - [martini.Router](http://godoc.org/github.com/go-martini/martini#Router)
 
 ### Обработчики
-Обработчики - это сердце и душа Martini. Обработчик - любая функция, которая может быть вызвана:
+Обработчики - это сердце и душа Martini. Обработчик обычно любая функция, которая может быть вызвана:
 ~~~ go
 m.Get("/", func() {
   println("hello world")
@@ -115,7 +115,7 @@ m.Get("/", func(res http.ResponseWriter, req *http.Request) { // res и req бу
 })
 ~~~
 
-Следующие сервисы включены в [martini.Classic()](http://godoc.org/github.com/go-martini/martini#Classic): 
+Следуюшие сервисы включены в [martini.Classic()](http://godoc.org/github.com/go-martini/martini#Classic): 
 
   * [*log.Logger](http://godoc.org/log#Logger) - Глобальный логгер для Martini.
   * [martini.Context](http://godoc.org/github.com/go-martini/martini#Context) - http request контекст.
@@ -125,27 +125,27 @@ m.Get("/", func(res http.ResponseWriter, req *http.Request) { // res и req бу
   * [*http.Request](http://godoc.org/net/http/#Request) - http Request.
 
 ### Роутинг
-В Martini, роут - это объединенные паттерн и HTTP метод.
+В Martini, роут - это объедененные паттерн и HTTP метод.
 Каждый роут может принимать один или несколько обработчиков:
 ~~~ go
 m.Get("/", func() {
-  // показать что-то
+  // показать что то
 })
 
 m.Patch("/", func() {
-  // обновить что-то
+  // обновить что то
 })
 
 m.Post("/", func() {
-  // создать что-то
+  // создать что то
 })
 
 m.Put("/", func() {
-  // изменить что-то
+  // изменить что то
 })
 
 m.Delete("/", func() {
-  // удалить что-то
+  // удулить что то
 })
 
 m.Options("/", func() {
@@ -179,7 +179,7 @@ m.Get("/hello/(?P<name>[a-zA-Z]+)", func(params martini.Params) string {
   return fmt.Sprintf ("Hello %s", params["name"])
 })
 ~~~
-Синтаксис регулярных выражений смотрите [Go documentation](http://golang.org/pkg/regexp/syntax/).
+Для большей информации о синтаксисе регулярных выражений смотрите [Go documentation](http://golang.org/pkg/regexp/syntax/).
 
 Обработчики роутов так же могут быть выстроены в стек, друг перед другом. Это очень удобно для таких задач как авторизация и аутентификация:
 ~~~ go
@@ -188,7 +188,7 @@ m.Get("/secret", authorize, func() {
 })
 ~~~
 
-Роуты так же могут быть объединены в группы, посредством метода Group:
+Роуты так же могут быть добавлены группой, посредством метода Group:
 ~~~ go
 m.Group("/books", func(r martini.Router) {
     r.Get("/:id", GetBooks)
@@ -209,7 +209,7 @@ m.Group("/books", func(r martini.Router) {
 ~~~
 
 ### Сервисы
-Сервисы - это объекты, которые доступны для внедрения в аргументы обработчиков. Вы можете замапить сервисы на уровне всего приложения либо на уровне запроса.
+Сервисы - это объеъкты, которые доступны для внедрения в аргументы обработчиков. Вы можете замапить сервисы на уровне всего приложения либо на уровне запроса.
 
 #### Глобальный маппинг
 Экземпляр Martini реализует интерфейс inject.Injector, поэтому замаппить сервис легко:
@@ -241,7 +241,7 @@ func WrapResponseWriter(res http.ResponseWriter, c martini.Context) {
 
 ### Отдача статических файлов
 Экземпляр [martini.Classic()](http://godoc.org/github.com/go-martini/martini#Classic) автоматически отдает статические файлы из директории "public" в корне, рядом с вашим файлом `server.go`.
-Вы можете добавить еще директорий, добавляя [martini.Static](http://godoc.org/github.com/go-martini/martini#Static) обработчики.  
+Вы можете добавить еше директорий, добавляя еще [martini.Static](http://godoc.org/github.com/go-martini/martini#Static) обаботчики.  
 ~~~ go
 m.Use(martini.Static("assets")) // отдача файлов из "assets" директории
 ~~~
@@ -254,7 +254,7 @@ m.Use(func() {
 })
 ~~~
 
-Для полного контроля над стеком middleware существует метод `Handlers`. В этом примере будут заменены все обработчики, которые были до этого:
+Для полного контроля над стеком middleware существует метод `Handlers`. В этом примере будут замененя все обработчики, которые были до этого:
 ~~~ go
 m.Handlers(
   Middleware1,
@@ -274,7 +274,7 @@ m.Use(func(res http.ResponseWriter, req *http.Request) {
 ~~~
 
 ### Next()
-[Context.Next()](http://godoc.org/github.com/go-martini/martini#Context) опциональная функция, которая может быть вызвана в Middleware обработчике, для выхода из контекста, и возврата в него, после вызова всего стека обработчиков. Это можно использовать для операций, которые должны быть выполнены после http запроса:
+[Context.Next()](http://godoc.org/github.com/go-martini/martini#Context) опциональная функция, которая может быть вызвана в Middleware обработчике, для выброса из контекста, и возврата в него, после вызова всего стека обработчиков. Это работает очень хорошо для некоторых операций, которые должны быть выполнены после http запроса:
 ~~~ go
 // логгирование до и после http запроса
 m.Use(func(c martini.Context, log *log.Logger){
@@ -287,22 +287,22 @@ m.Use(func(c martini.Context, log *log.Logger){
 ~~~
 
 ## Окружение
-Некоторые Martini обработчики используют глобальную переменную `martini.Env` для того, чтоб предоставить специальную функциональность для девелопмент и продакшн окружения. Рекомендуется устанавливать `MARTINI_ENV=production`, когда вы деплоите приложение на продакшн.
+Некоторые Martini обработчики используют глобальную переменную `martini.Env` для того чтоб предоставить специальную функциональность для девелопмент и продакшн окружения. Рекомендуется устанавливать `MARTINI_ENV=production`, когда вы деплоите приложение на продакшн.
 
 ## FAQ
 
-### Где найти готовые middleware?
+### Где найти middleware N?
 
-Начните поиск с [martini-contrib](https://github.com/martini-contrib) проектов. Если нет ничего подходящего, без колебаний пишите члену команды martini-contrib о добавлении нового репозитория в организацию.
+Начите поиск с [martini-contrib](https://github.com/martini-contrib) проектов. Если нет ничего подходящего, без колебаний пишите члену команды martini-contrib о добавлении нового репозитория в организацию.
 
 * [auth](https://github.com/martini-contrib/auth) - Обработчики для аутентификации.
 * [binding](https://github.com/martini-contrib/binding) - Обработчик для маппинга/валидации сырого запроса в определенную структуру(struct).
-* [gzip](https://github.com/martini-contrib/gzip) - Обработчик, добавляющий gzip сжатие для запросов.
+* [gzip](https://github.com/martini-contrib/gzip) - Обработчик, добовляюший gzip сжатие для запросов.
 * [render](https://github.com/martini-contrib/render) - Обработчик, которые предоставляет сервис для легкого рендеринга JSON и HTML шаблонов.
 * [acceptlang](https://github.com/martini-contrib/acceptlang) - Обработчик для парсинга `Accept-Language` HTTP заголовка.
 * [sessions](https://github.com/martini-contrib/sessions) - Сервис сессий.
 * [strip](https://github.com/martini-contrib/strip) - Удаление префиксов из URL.
-* [method](https://github.com/martini-contrib/method) - Подмена HTTP метода через заголовок.
+* [method](https://github.com/martini-contrib/method) - подмена HTTP метода через заголовок.
 * [secure](https://github.com/martini-contrib/secure) - Набор для безопасности.
 * [encoder](https://github.com/martini-contrib/encoder) - Сервис для представления данных в нескольких форматах и взаимодействия с контентом.
 * [cors](https://github.com/martini-contrib/cors) - Поддержка CORS.
@@ -310,7 +310,7 @@ m.Use(func(c martini.Context, log *log.Logger){
 
 ### Как интегрироваться с существуюшими серверами?
 
-Экземпляр Martini реализует интерфейс `http.Handler`, потому - это очень просто использовать вместе с существующим Go проектом. Например, это работает для платформы Google App Engine:
+Экземпляр Martini реализует интерфейс `http.Handler`, потому это очень просто использовать подпроект существующего Go сервера. Например, это работает для платформы Google App Engine:
 ~~~ go
 package hello
 
@@ -329,7 +329,7 @@ func init() {
 ~~~
 
 ### Как изменить порт и/или хост?
-Функция `Run` смотрит переменные окружиения PORT и HOST, и использует их.
+Функция `Run` смотрит переменные окружиения PORT и HOST, и использует их по назначению.
 В противном случае Martini по умолчанию будет использовать `localhost:3000`.
 Для большей гибкости используйте вместо этого функцию `http.ListenAndServe`.
 
@@ -341,14 +341,14 @@ func init() {
 
 ### Живая перезагрузка кода?
 
-[gin](https://github.com/codegangsta/gin) и [fresh](https://github.com/pilu/fresh) могут работать вместе с Martini.
+[gin](https://github.com/codegangsta/gin) и [fresh](https://github.com/pilu/fresh) оба перезагружают приложения Martini налету.
 
-## Вклад в общее дело
+## Вклад в обшее дело
 
-Подразумевается что Martini чистый и маленький. Большинство улучшений должны быть в организации [martini-contrib](https://github.com/martini-contrib). Но если вы хотите улучшить ядро Martini, отправляйте пулл реквесты.
+Подрвзумевается что Martini чистый и маленький. Большенство улучшений должны быть в организации [martini-contrib](https://github.com/martini-contrib). Но если вы хотите улучшить ядро Martini, отправляйте пулл реквесты.
 
 ## О проекте
 
 Вдохновлен [express](https://github.com/visionmedia/express) и [sinatra](https://github.com/sinatra/sinatra)
 
-Martini создан [Code Gangsta](http://codegangsta.io/)
+Martini создан одержимым [Code Gangsta](http://codegangsta.io/)

@@ -4,8 +4,8 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/cloudfoundry-community/go-cfenv",
-			"Comment": "v1.7-3-gdb26cf7",
-			"Rev": "db26cf7b4a1a562641392e8455975dda9f0f90d0"
+			"Comment": "v1.12",
+			"Rev": "c682e189b94b0b2ec6edf12363df2eecf29d7256"
 		},
 		{
 			"ImportPath": "github.com/cloudfoundry-community/types-cf",
@@ -14,13 +14,13 @@
 		},
 		{
 			"ImportPath": "github.com/codegangsta/inject",
-			"Comment": "v1.0-rc1-4-g4b81725",
-			"Rev": "4b8172520a03fa190f427bbd284db01b459bfce7"
+			"Comment": "v1.0-rc1",
+			"Rev": "37d7f8432a3e684eef9b2edece76bdfa6ac85b39"
 		},
 		{
 			"ImportPath": "github.com/go-martini/martini",
-			"Comment": "v1.0-58-gbd8578f",
-			"Rev": "bd8578f41c9b53278c4ada731fe5beac03f80d77"
+			"Comment": "v1.0",
+			"Rev": "49411a5b646861ad29a6ddd5351717a0a9c49b94"
 		},
 		{
 			"ImportPath": "github.com/kr/pretty",
@@ -33,7 +33,7 @@
 		},
 		{
 			"ImportPath": "github.com/mitchellh/mapstructure",
-			"Rev": "442e588f213303bec7936deba67901f8fc8f18b1"
+			"Rev": "281073eb9eb092240d33ef253c404f1cca550309"
 		}
 	]
 }
