@@ -35,6 +35,10 @@ func brokerCatalog() (int, []byte) {
 	if len(tags) > 0 {
 		tagArray = strings.Split(tags, ",")
 	}
+	var requires []string
+	if len(serviceBinding.SyslogDrainURL) > 0 {
+		requires = []string{"syslog_drain"}
+	}
 	catalog := cf.Catalog{
 		Services: []*cf.Service{
 			{
@@ -43,6 +47,7 @@ func brokerCatalog() (int, []byte) {
 				Description: "Shared service for " + serviceName,
 				Bindable:    true,
 				Tags:        tagArray,
+				Requires:    requires,
 				Metadata: &cf.ServiceMeta{
 					DisplayName: serviceName,
 					ImageURL:    imageURL,
