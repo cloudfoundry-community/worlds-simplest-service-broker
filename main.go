@@ -10,6 +10,7 @@ import (
 	"github.com/cloudfoundry-community/go-cfenv"
 	"github.com/cloudfoundry-community/types-cf"
 	"github.com/go-martini/martini"
+	"github.com/martini-contrib/auth"
 	"github.com/kr/pretty"
 )
 
@@ -26,7 +27,7 @@ type serviceBindingResponse struct {
 	SyslogDrainURL string                 `json:"syslog_drain_url"`
 }
 
-var serviceName, servicePlan, baseGUID, tags, imageURL string
+var serviceName, servicePlan, baseGUID, authUser, authPassword, tags, imageURL string
 var serviceBinding serviceBindingResponse
 var appURL string
 
@@ -134,6 +135,13 @@ func main() {
 	servicePlan = os.Getenv("SERVICE_PLAN")
 	if servicePlan == "" {
 		servicePlan = "shared"
+	}
+
+	authUser = os.Getenv("AUTH_USER")
+	authPassword = os.Getenv("AUTH_PASSWORD")
+	if (authUser != "") && (authPassword != "") {
+		// secure service broker with basic auth if both env variables are set
+		m.Use(auth.Basic(authUser, authPassword))
 	}
 
 	serviceBinding.SyslogDrainURL = os.Getenv("SYSLOG_DRAIN_URL")
