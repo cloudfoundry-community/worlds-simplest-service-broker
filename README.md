@@ -74,6 +74,21 @@ cf restart $APPNAME
 
 Each application will need rebind and restart/restage to get the new credentials.
 
+### Basic Authentication
+
+Set the environment variables `AUTH_USER` and `AUTH_PASSWORD` to enable basic authentication for the broker.
+
+This is useful to prevent unauthorized access to the credentials exposed by the broker (e.g. by somebody doing a `curl -X PUT http://$SERVICE_URL/v2/service_instances/a/service_bindings/b`).
+
+To do so (of course, change `secret_user` and `secret_password` to something more secret):
+
+```
+cf set-env $APPNAME AUTH_USER secret_user
+cf set-env $APPNAME AUTH_PASSWORD secret_password
+cf restart $APPNAME
+cf update-service-broker $SERVICE secret_user secret_password https://$SERVICE_URL
+```
+
 ### syslog_drain_url
 
 The broker can advertise a `syslog_drain_url` endpoint with the `$SYSLOG_DRAIN_URL` variable:
