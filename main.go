@@ -23,7 +23,7 @@ type serviceInstanceResponse struct {
 
 type serviceBindingResponse struct {
 	Credentials    map[string]interface{} `json:"credentials"`
-	SyslogDrainURL string                 `json:"syslog_drain_url"`
+	SyslogDrainURL string                 `json:"syslog_drain_url,omitempty"`
 }
 
 var serviceName, servicePlan, baseGUID, tags, imageURL string
