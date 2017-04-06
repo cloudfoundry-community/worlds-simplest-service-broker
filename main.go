@@ -4,14 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 
 	"github.com/cloudfoundry-community/go-cfenv"
 	"github.com/cloudfoundry-community/types-cf"
 	"github.com/go-martini/martini"
-	"github.com/martini-contrib/auth"
 	"github.com/kr/pretty"
+	"github.com/martini-contrib/auth"
 )
 
 func init() {
@@ -27,9 +28,15 @@ type serviceBindingResponse struct {
 	SyslogDrainURL string                 `json:"syslog_drain_url,omitempty"`
 }
 
+type lastOperationResponse struct {
+	State       string `json:"state"`
+	Description string `json:"description,omitempty"`
+}
+
 var serviceName, servicePlan, baseGUID, authUser, authPassword, tags, imageURL string
 var serviceBinding serviceBindingResponse
 var appURL string
+var fakeAsync bool
 
 func brokerCatalog() (int, []byte) {
 	tagArray := []string{}
@@ -68,9 +75,9 @@ func brokerCatalog() (int, []byte) {
 	if err != nil {
 		fmt.Println("Um, how did we fail to marshal this catalog:")
 		fmt.Printf("%# v\n", pretty.Formatter(catalog))
-		return 500, []byte{}
+		return http.StatusInternalServerError, []byte{}
 	}
-	return 200, json
+	return http.StatusOK, json
 }
 
 func createServiceInstance(params martini.Params) (int, []byte) {
@@ -82,15 +89,35 @@ func createServiceInstance(params martini.Params) (int, []byte) {
 	if err != nil {
 		fmt.Println("Um, how did we fail to marshal this service instance:")
 		fmt.Printf("%# v\n", pretty.Formatter(instance))
-		return 500, []byte{}
+		return http.StatusInternalServerError, []byte{}
 	}
-	return 201, json
+	if fakeAsync {
+		return http.StatusAccepted, json
+	}
+	return http.StatusCreated, json
 }
 
 func deleteServiceInstance(params martini.Params) (int, string) {
 	serviceID := params["service_id"]
 	fmt.Printf("Deleting service instance %s for service %s plan %s\n", serviceID, serviceName, servicePlan)
-	return 200, "{}"
+	if fakeAsync {
+		return http.StatusAccepted, "{}"
+	}
+	return http.StatusOK, "{}"
+}
+
+func lastOperation(params martini.Params) (int, []byte) {
+	lastOp := lastOperationResponse{
+		State:       "succeeded",
+		Description: "fake async in action",
+	}
+	json, err := json.Marshal(lastOp)
+	if err != nil {
+		fmt.Println("Um, how did we fail to marshal this service instance:")
+		fmt.Printf("%# v\n", pretty.Formatter(lastOp))
+		return http.StatusInternalServerError, []byte{}
+	}
+	return http.StatusOK, json
 }
 
 func createServiceBinding(params martini.Params) (int, []byte) {
@@ -103,9 +130,9 @@ func createServiceBinding(params martini.Params) (int, []byte) {
 	if err != nil {
 		fmt.Println("Um, how did we fail to marshal this binding:")
 		fmt.Printf("%# v\n", pretty.Formatter(serviceBinding))
-		return 500, []byte{}
+		return http.StatusInternalServerError, []byte{}
 	}
-	return 201, json
+	return http.StatusCreated, json
 }
 
 func deleteServiceBinding(params martini.Params) (int, string) {
@@ -113,12 +140,12 @@ func deleteServiceBinding(params martini.Params) (int, string) {
 	serviceBindingID := params["binding_id"]
 	fmt.Printf("Delete service binding %s for service %s plan %s instance %s\n",
 		serviceBindingID, serviceName, servicePlan, serviceID)
-	return 200, "{}"
+	return http.StatusOK, "{}"
 }
 
 func showServiceInstanceDashboard(params martini.Params) (int, string) {
 	fmt.Printf("Show dashboard for service %s plan %s\n", serviceName, servicePlan)
-	return 200, "Dashboard"
+	return http.StatusOK, "Dashboard"
 }
 
 func main() {
@@ -153,6 +180,9 @@ func main() {
 	tags = os.Getenv("TAGS")
 	imageURL = os.Getenv("IMAGE_URL")
 
+	fakeAsync = os.Getenv("FAKE_ASYNC") == "true"
+	fmt.Println("Each provision/deprovision request will support an async GET /last_operation request")
+
 	json.Unmarshal([]byte(credentials), &serviceBinding.Credentials)
 	fmt.Printf("%# v\n", pretty.Formatter(serviceBinding))
 
@@ -166,6 +196,7 @@ func main() {
 
 	// Cloud Foundry Service API
 	m.Get("/v2/catalog", brokerCatalog)
+	m.Get("/v2/service_instances/:service_id/last_operation", lastOperation)
 	m.Put("/v2/service_instances/:service_id", createServiceInstance)
 	m.Delete("/v2/service_instances/:service_id", deleteServiceInstance)
 	m.Put("/v2/service_instances/:service_id/service_bindings/:binding_id", createServiceBinding)
