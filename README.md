@@ -33,7 +33,7 @@ Build locally
 
 ```
 godep get
-export BASE_GUID=$(uuid)
+export BASE_GUID=$(uuidgen)
 export CREDENTIALS='{"port": "4000", "host": "1.2.3.4"}'
 export SERVICE_NAME=myservice
 export SERVICE_PLAN_NAME=shared
@@ -48,7 +48,7 @@ Deploy to Cloud Foundry
 export SERVICE=myservice
 export APPNAME=$SERVICE-broker
 cf push $APPNAME --no-start -m 128M -k 256M
-cf set-env $APPNAME BASE_GUID $(uuid)
+cf set-env $APPNAME BASE_GUID $(uuidgen)
 cf set-env $APPNAME CREDENTIALS '{"port": "4000", "host": "1.2.3.4"}'
 cf set-env $APPNAME SERVICE_NAME $SERVICE
 cf set-env $APPNAME SERVICE_PLAN_NAME shared
