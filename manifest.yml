@@ -1,0 +1,14 @@
+applications:
+- name: my-broker
+  disk_quota: 256M
+  buildpack: go_buildpack
+  env:
+    GOPACKAGENAME: worlds-simplest-service-broker
+    BASE_GUID: F55C69BB-032A-4DAD-AAF0-8BB518D1D8F5
+    CREDENTIALS: '{"port": "4000", "host": "1.2.3.4"}'
+    SERVICE_NAME: myservice
+    SERVICE_PLAN_NAME: shared
+    TAGS: simple,shared
+  instances: 1
+  memory: 128M
+  stack: cflinuxfs2
