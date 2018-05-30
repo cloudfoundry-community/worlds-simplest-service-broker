@@ -1,15 +1,10 @@
-# Go Cloud Foundry Environment Package (cfenv)
+# Go CF Environment Package [![Build Status - Master](https://travis-ci.org/cloudfoundry-community/go-cfenv.svg?branch=master)](https://travis-ci.org/cloudfoundry-community/go-cfenv)
 
 ### Overview
 
 [![GoDoc](https://godoc.org/github.com/cloudfoundry-community/go-cfenv?status.png)](https://godoc.org/github.com/cloudfoundry-community/go-cfenv)
 
-`cfenv` is a package to assist you in writing Go apps that run on [Cloud Foundry](http://cloudfoundry.org). It provides convenience functions and structures that map to Cloud Foundry environment variable primitives (http://docs.cloudfoundry.com/docs/using/deploying-apps/environment-variable.html).
-
-### Build Status
-
-* [![Build Status - Master](https://travis-ci.org/cloudfoundry-community/go-cfenv.svg?branch=master)](https://travis-ci.org/cloudfoundry-community/go-cfenv) `Master`
-* [![Build Status - Develop](https://travis-ci.org/cloudfoundry-community/go-cfenv.svg?branch=develop)](https://travis-ci.org/cloudfoundry-community/go-cfenv) `Develop`
+`cfenv` is a package to assist you in writing Go apps that run on [Cloud Foundry](http://cloudfoundry.org). It provides convenience functions and structures that map to Cloud Foundry environment variable primitives (http://docs.cloudfoundry.org/devguide/deploy-apps/environment-variable.html).
 
 ### Usage
 
@@ -23,7 +18,7 @@ import (
 )
 
 func main() {
-	appEnv := cfenv.Current()
+	appEnv, _ := cfenv.Current()
 
 	fmt.Println("ID:", appEnv.ID)
 	fmt.Println("Index:", appEnv.Index)
@@ -42,4 +37,4 @@ func main() {
 
 ### Contributing
 
-Pull requests welcomed. Please ensure you make your changes in a branch off of the `develop` branch, not the `master` branch.
+Pull requests welcomed.

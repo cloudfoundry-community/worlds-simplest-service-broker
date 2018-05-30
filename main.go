@@ -190,7 +190,12 @@ func main() {
 	if err == nil {
 		appURL = fmt.Sprintf("https://%s", appEnv.ApplicationURIs[0])
 	} else {
-		appURL = "http://localhost:5000"
+		var port string
+		var ok bool
+		if port, ok = os.LookupEnv("PORT"); !ok {
+			port = "3000" // default of martini
+		}
+		appURL = "http://localhost:" + port
 	}
 	fmt.Println("Running as", appURL)
 

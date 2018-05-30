@@ -1,5 +1,4 @@
-World's Simplest Service Broker
-===============================
+# World's Simplest Service Broker
 
 If you have a shared service such as Hadoop where all applications will ultimately bind to the same service with the same credentials then you have found the service broker for you - the World's Simplest Service Broker for Cloud Foundry.
 
@@ -11,14 +10,13 @@ As the admin of a service sharing it via a service broker - see section [Deploy 
 
 As a user of the broker:
 
-```
+```plain
 cf cs myservice some-service-name
 cf bs my-app some-service-name
 cf restage my-app
 ```
 
-Why not "user-provided services"?
----------------------------------
+## Why not "user-provided services"?
 
 Cloud Foundry includes "user-provided services" (see `cf cups` in the CLI) for easy registration of existing external service credentials.
 
@@ -28,23 +26,20 @@ The other restriction is that "cups" does not currently support tags.  Framework
 
 Instead, with the World's Simplest Service Broker you can make the credentials easily and instantly available to all organizations' spaces.
 
-Build locally
--------------
+## Build locally
 
-```
-godep get
-export BASE_GUID=$(uuid)
+```plain
+export BASE_GUID=$(uuid) # or try $(uuidgen) or any GUID that makes you happy
 export CREDENTIALS='{"port": "4000", "host": "1.2.3.4"}'
 export SERVICE_NAME=myservice
 export SERVICE_PLAN_NAME=shared
 export TAGS=simple,shared
-worlds-simplest-service-broker
+go run main.go
 ```
 
-Deploy to Cloud Foundry
------------------------
+## Deploy to Cloud Foundry
 
-```
+```plain
 export SERVICE=myservice
 export APPNAME=$SERVICE-broker
 cf push $APPNAME --no-start -m 128M -k 256M
@@ -59,7 +54,7 @@ cf start $APPNAME
 
 To register the service broker (as an admin user):
 
-```
+```plain
 export SERVICE_URL=$(cf app $APPNAME | grep routes: | awk '{print $2}')
 cf create-service-broker $SERVICE admin admin https://$SERVICE_URL
 cf enable-service-access $SERVICE
@@ -67,7 +62,7 @@ cf enable-service-access $SERVICE
 
 To change the credentials being offered for bindings:
 
-```
+```plain
 export SERVICE=myservice
 export APPNAME=$SERVICE-broker
 cf set-env $APPNAME CREDENTIALS '{"port": "4000", "host": "1.2.3.4"}'
@@ -84,7 +79,7 @@ This is useful to prevent unauthorized access to the credentials exposed by the 
 
 To do so (of course, change `secret_user` and `secret_password` to something more secret):
 
-```
+```plain
 cf set-env $APPNAME AUTH_USER secret_user
 cf set-env $APPNAME AUTH_PASSWORD secret_password
 cf restart $APPNAME
@@ -95,7 +90,7 @@ cf update-service-broker $SERVICE secret_user secret_password https://$SERVICE_U
 
 The broker can advertise a `syslog_drain_url` endpoint with the `$SYSLOG_DRAIN_URL` variable:
 
-```
+```plain
 cf set-env $APPNAME SYSLOG_DRAIN_URL 'syslog://1.2.3.4:514'
 ```
 
@@ -107,6 +102,6 @@ Each service instance is assigned the same dashboard URL - `/dashboard`.
 
 Adding image url to service broker
 
-```
+```plain
 cf set-env $APPNAME IMAGE_URL '<image url>'
 ```

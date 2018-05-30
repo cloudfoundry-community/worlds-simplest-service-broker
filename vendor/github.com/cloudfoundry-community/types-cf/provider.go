@@ -7,7 +7,7 @@ type ServiceProvider interface {
 	GetCatalog() (*Catalog, *ServiceProviderError)
 
 	// CreateService creates a service instance for specific plan
-	CreateService(r *ServiceCreationRequest) (*ServiceCreationResponse, *ServiceProviderError)
+	CreateService(r *ServiceCreationRequest) (*ServiceCreationResponce, *ServiceProviderError)
 
 	// DeleteService deletes previously created service instance
 	DeleteService(instanceID string) *ServiceProviderError

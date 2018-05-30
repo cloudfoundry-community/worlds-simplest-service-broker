@@ -9,8 +9,8 @@ type ServiceCreationRequest struct {
 	SpaceGUID        string `json:"space_guid"`
 }
 
-// ServiceCreationResponse describes Cloud Foundry service provisioning response
-type ServiceCreationResponse struct {
+// ServiceCreationResponce describes Cloud Foundry service provisioning response
+type ServiceCreationResponce struct {
 	DashboardURL string `json:"dashboard_url"`
 }
 
