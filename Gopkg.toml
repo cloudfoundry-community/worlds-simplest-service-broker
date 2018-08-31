@@ -26,7 +26,8 @@
 
 [[constraint]]
   name = "github.com/cloudfoundry-community/types-cf"
-  version = "1.3.0"
+  source = "github.com/cloudfoundry-community/types-cf"
+  revision = "0f57b598859da26e2ccd58dde308bc40e67fb25e"
 
 [[constraint]]
   name = "github.com/go-martini/martini"

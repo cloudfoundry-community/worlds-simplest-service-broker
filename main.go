@@ -15,28 +15,16 @@ import (
 	"github.com/martini-contrib/auth"
 )
 
+var appURL, dashboardURL, syslogDrainUrl, credentials string
+var serviceName, servicePlan, baseGUID, authUser, authPassword, tags, serviceDescription string
+var metadataDisplayName, metadataLongDescription, metadataImageURL, metadataProviderDisplayName, metadataDocumentationUrl, metadataSupportUrl string
+var fakeAsync bool
+
+
 func init() {
 	log.SetFlags(log.Ltime | log.Lshortfile)
 }
 
-type serviceInstanceResponse struct {
-	DashboardURL string `json:"dashboard_url"`
-}
-
-type serviceBindingResponse struct {
-	Credentials    map[string]interface{} `json:"credentials"`
-	SyslogDrainURL string                 `json:"syslog_drain_url,omitempty"`
-}
-
-type lastOperationResponse struct {
-	State       string `json:"state"`
-	Description string `json:"description,omitempty"`
-}
-
-var serviceName, servicePlan, baseGUID, authUser, authPassword, tags, imageURL string
-var serviceBinding serviceBindingResponse
-var appURL string
-var fakeAsync bool
 
 func brokerCatalog() (int, []byte) {
 	tagArray := []string{}
@@ -44,7 +32,7 @@ func brokerCatalog() (int, []byte) {
 		tagArray = strings.Split(tags, ",")
 	}
 	var requires []string
-	if len(serviceBinding.SyslogDrainURL) > 0 {
+	if syslogDrainUrl != "" {
 		requires = []string{"syslog_drain"}
 	}
 	catalog := cf.Catalog{
@@ -52,19 +40,23 @@ func brokerCatalog() (int, []byte) {
 			{
 				ID:          baseGUID + "-service-" + serviceName,
 				Name:        serviceName,
-				Description: "Shared service for " + serviceName,
+				Description: serviceDescription,
 				Bindable:    true,
 				Tags:        tagArray,
 				Requires:    requires,
 				Metadata: &cf.ServiceMeta{
-					DisplayName: serviceName,
-					ImageURL:    imageURL,
+					DisplayName:         metadataDisplayName,
+					ImageURL:            metadataImageURL,
+					Description:         metadataLongDescription,
+					ProviderDisplayName: metadataProviderDisplayName,
+					DocURL:              metadataDocumentationUrl,
+					SupportURL:          metadataSupportUrl,
 				},
 				Plans: []*cf.Plan{
 					{
 						ID:          baseGUID + "-plan-" + servicePlan,
 						Name:        servicePlan,
-						Description: "Shared service for " + serviceName,
+						Description: serviceDescription,
 						Free:        true,
 					},
 				},
@@ -80,11 +72,13 @@ func brokerCatalog() (int, []byte) {
 	return http.StatusOK, json
 }
 
+
 func createServiceInstance(params martini.Params) (int, []byte) {
 	serviceID := params["service_id"]
 	fmt.Printf("Creating service instance %s for service %s plan %s\n", serviceID, serviceName, servicePlan)
-
-	instance := serviceInstanceResponse{DashboardURL: fmt.Sprintf("%s/dashboard", appURL)}
+	instance := cf.ServiceCreationResponse{
+		DashboardURL: dashboardURL,
+	}
 	json, err := json.Marshal(instance)
 	if err != nil {
 		fmt.Println("Um, how did we fail to marshal this service instance:")
@@ -97,6 +91,7 @@ func createServiceInstance(params martini.Params) (int, []byte) {
 	return http.StatusCreated, json
 }
 
+
 func deleteServiceInstance(params martini.Params) (int, string) {
 	serviceID := params["service_id"]
 	fmt.Printf("Deleting service instance %s for service %s plan %s\n", serviceID, serviceName, servicePlan)
@@ -106,10 +101,11 @@ func deleteServiceInstance(params martini.Params) (int, string) {
 	return http.StatusOK, "{}"
 }
 
+
 func lastOperation(params martini.Params) (int, []byte) {
-	lastOp := lastOperationResponse{
+	lastOp := cf.ServiceLastOperationResponse{
 		State:       "succeeded",
-		Description: "fake async in action",
+		Description: "async in action",
 	}
 	json, err := json.Marshal(lastOp)
 	if err != nil {
@@ -120,12 +116,16 @@ func lastOperation(params martini.Params) (int, []byte) {
 	return http.StatusOK, json
 }
 
+
 func createServiceBinding(params martini.Params) (int, []byte) {
 	serviceID := params["service_id"]
 	serviceBindingID := params["binding_id"]
-	fmt.Printf("Creating service binding %s for service %s plan %s instance %s\n",
-		serviceBindingID, serviceName, servicePlan, serviceID)
-
+	fmt.Printf("Creating service binding %s for service %s plan %s instance %s\n", serviceBindingID, serviceName, servicePlan, serviceID)
+	serviceBinding := cf.ServiceBindingResponse{}
+	json.Unmarshal([]byte(credentials), &serviceBinding.Credentials)
+	if syslogDrainUrl != "" {
+		serviceBinding.SyslogDrainURL = syslogDrainUrl
+	}
 	json, err := json.Marshal(serviceBinding)
 	if err != nil {
 		fmt.Println("Um, how did we fail to marshal this binding:")
@@ -135,69 +135,64 @@ func createServiceBinding(params martini.Params) (int, []byte) {
 	return http.StatusCreated, json
 }
 
+
 func deleteServiceBinding(params martini.Params) (int, string) {
 	serviceID := params["service_id"]
 	serviceBindingID := params["binding_id"]
-	fmt.Printf("Delete service binding %s for service %s plan %s instance %s\n",
-		serviceBindingID, serviceName, servicePlan, serviceID)
+	fmt.Printf("Delete service binding %s for service %s plan %s instance %s\n", serviceBindingID, serviceName, servicePlan, serviceID)
 	return http.StatusOK, "{}"
 }
+
 
 func showServiceInstanceDashboard(params martini.Params) (int, string) {
 	fmt.Printf("Show dashboard for service %s plan %s\n", serviceName, servicePlan)
 	return http.StatusOK, "Dashboard"
 }
 
+
+func getEnvVar(v string, def string) string {
+	r := os.Getenv(v)
+	if r == "" {
+		return def
+	}
+	return r
+}
+
+
 func main() {
 	m := martini.Classic()
 
-	baseGUID = os.Getenv("BASE_GUID")
-	if baseGUID == "" {
-		baseGUID = "29140B3F-0E69-4C7E-8A35"
+	appPort := getEnvVar("PORT", "3000") // default of martini
+	appName := "some-service"
+	appEnv, err := cfenv.Current()
+	if err == nil {
+		appURL = fmt.Sprintf("https://%s", appEnv.ApplicationURIs[0])
+		appName = appEnv.Name
+	} else {
+		appURL = "http://localhost:" + appPort
 	}
-	serviceName = os.Getenv("SERVICE_NAME")
-	if serviceName == "" {
-		serviceName = "some-service-name" // replace with cfenv.AppName
-	}
-	servicePlan = os.Getenv("SERVICE_PLAN")
-	if servicePlan == "" {
-		servicePlan = "shared"
-	}
-
-	authUser = os.Getenv("AUTH_USER")
-	authPassword = os.Getenv("AUTH_PASSWORD")
+	baseGUID = getEnvVar("SERVICE_BASE_GUID", "29140B3F-0E69-4C7E-8A35")
+	serviceName = getEnvVar("SERVICE_NAME", appName)
+	servicePlan = getEnvVar("SERVICE_PLAN", "shared")
+	serviceDescription = getEnvVar("SERVICE_DESCRIPTION", "Shared service for " + serviceName)
+	authUser = getEnvVar("SERVICE_AUTH_USER", "")
+	authPassword = getEnvVar("SERVICE_AUTH_PASSWORD", "")
 	if (authUser != "") && (authPassword != "") {
 		// secure service broker with basic auth if both env variables are set
 		m.Use(auth.Basic(authUser, authPassword))
 	}
-
-	serviceBinding.SyslogDrainURL = os.Getenv("SYSLOG_DRAIN_URL")
-
-	credentials := os.Getenv("CREDENTIALS")
-	if credentials == "" {
-		credentials = "{\"port\": \"4000\"}"
-	}
-	tags = os.Getenv("TAGS")
-	imageURL = os.Getenv("IMAGE_URL")
-
-	fakeAsync = os.Getenv("FAKE_ASYNC") == "true"
-	fmt.Println("Each provision/deprovision request will support an async GET /last_operation request")
-
-	json.Unmarshal([]byte(credentials), &serviceBinding.Credentials)
-	fmt.Printf("%# v\n", pretty.Formatter(serviceBinding))
-
-	appEnv, err := cfenv.Current()
-	if err == nil {
-		appURL = fmt.Sprintf("https://%s", appEnv.ApplicationURIs[0])
-	} else {
-		var port string
-		var ok bool
-		if port, ok = os.LookupEnv("PORT"); !ok {
-			port = "3000" // default of martini
-		}
-		appURL = "http://localhost:" + port
-	}
-	fmt.Println("Running as", appURL)
+	syslogDrainUrl = getEnvVar("SYSLOG_DRAIN_URL", "")
+	tags = getEnvVar("SERVICE_TAGS", "")
+	dashboardURL = getEnvVar("SERVICE_DASHBOARD_URL", fmt.Sprintf("%s/dashboard", appURL))
+	metadataDisplayName = getEnvVar("SERVICE_METADATA_DISPLAYNAME", serviceName)
+	metadataLongDescription = getEnvVar("SERVICE_METADATA_LONGDESC", serviceDescription)
+	metadataImageURL = getEnvVar("SERVICE_METADATA_IMAGEURL", "")
+	metadataProviderDisplayName = getEnvVar("SERVICE_METADATA_PROVIDERDISPLAYNAME", "")
+	metadataDocumentationUrl = getEnvVar("SERVICE_METADATA_DOCURL", "")
+	metadataSupportUrl = getEnvVar("SERVICE_METADATA_SUPPORTURL", "")
+	credentials = getEnvVar("SERVICE_CREDENTIALS", "{}")
+	// Each provision/deprovision request will support an async GET /last_operation request
+	fakeAsync = getEnvVar("SERVICE_FAKE_ASYNC", "") == "true"
 
 	// Cloud Foundry Service API
 	m.Get("/v2/catalog", brokerCatalog)
@@ -206,9 +201,10 @@ func main() {
 	m.Delete("/v2/service_instances/:service_id", deleteServiceInstance)
 	m.Put("/v2/service_instances/:service_id/service_bindings/:binding_id", createServiceBinding)
 	m.Delete("/v2/service_instances/:service_id/service_bindings/:binding_id", deleteServiceBinding)
-
 	// Service Instance Dashboard
 	m.Get("/dashboard", showServiceInstanceDashboard)
+
+	fmt.Println("Running as", appURL)
 
 	m.Run()
 }
