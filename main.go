@@ -20,11 +20,14 @@ var serviceName, servicePlan, baseGUID, authUser, authPassword, tags, serviceDes
 var metadataDisplayName, metadataLongDescription, metadataImageURL, metadataProviderDisplayName, metadataDocumentationUrl, metadataSupportUrl string
 var fakeAsync bool
 
+type lastOperationResponse struct {
+	State       string `json:"state"`
+	Description string `json:"description,omitempty"`
+}
 
 func init() {
 	log.SetFlags(log.Ltime | log.Lshortfile)
 }
-
 
 func brokerCatalog() (int, []byte) {
 	tagArray := []string{}
@@ -72,7 +75,6 @@ func brokerCatalog() (int, []byte) {
 	return http.StatusOK, json
 }
 
-
 func createServiceInstance(params martini.Params) (int, []byte) {
 	serviceID := params["service_id"]
 	fmt.Printf("Creating service instance %s for service %s plan %s\n", serviceID, serviceName, servicePlan)
@@ -91,7 +93,6 @@ func createServiceInstance(params martini.Params) (int, []byte) {
 	return http.StatusCreated, json
 }
 
-
 func deleteServiceInstance(params martini.Params) (int, string) {
 	serviceID := params["service_id"]
 	fmt.Printf("Deleting service instance %s for service %s plan %s\n", serviceID, serviceName, servicePlan)
@@ -101,9 +102,8 @@ func deleteServiceInstance(params martini.Params) (int, string) {
 	return http.StatusOK, "{}"
 }
 
-
 func lastOperation(params martini.Params) (int, []byte) {
-	lastOp := cf.ServiceLastOperationResponse{
+	lastOp := lastOperationResponse{
 		State:       "succeeded",
 		Description: "async in action",
 	}
@@ -116,13 +116,22 @@ func lastOperation(params martini.Params) (int, []byte) {
 	return http.StatusOK, json
 }
 
-
 func createServiceBinding(params martini.Params) (int, []byte) {
+	type serviceCredentials map[string]string
 	serviceID := params["service_id"]
 	serviceBindingID := params["binding_id"]
 	fmt.Printf("Creating service binding %s for service %s plan %s instance %s\n", serviceBindingID, serviceName, servicePlan, serviceID)
-	serviceBinding := cf.ServiceBindingResponse{}
-	json.Unmarshal([]byte(credentials), &serviceBinding.Credentials)
+
+	c := make(serviceCredentials)
+	e := json.Unmarshal([]byte(credentials), &c)
+	serviceBinding := cf.ServiceBindingResponse{
+		Credentials: c,
+	}
+	if e != nil {
+		fmt.Printf("Failed to load credentials: %s", credentials)
+		return http.StatusInternalServerError, []byte{}
+	}
+
 	if syslogDrainUrl != "" {
 		serviceBinding.SyslogDrainURL = syslogDrainUrl
 	}
@@ -135,7 +144,6 @@ func createServiceBinding(params martini.Params) (int, []byte) {
 	return http.StatusCreated, json
 }
 
-
 func deleteServiceBinding(params martini.Params) (int, string) {
 	serviceID := params["service_id"]
 	serviceBindingID := params["binding_id"]
@@ -143,12 +151,10 @@ func deleteServiceBinding(params martini.Params) (int, string) {
 	return http.StatusOK, "{}"
 }
 
-
 func showServiceInstanceDashboard(params martini.Params) (int, string) {
 	fmt.Printf("Show dashboard for service %s plan %s\n", serviceName, servicePlan)
 	return http.StatusOK, "Dashboard"
 }
-
 
 func getEnvVar(v string, def string) string {
 	r := os.Getenv(v)
@@ -157,7 +163,6 @@ func getEnvVar(v string, def string) string {
 	}
 	return r
 }
-
 
 func main() {
 	m := martini.Classic()
@@ -174,7 +179,7 @@ func main() {
 	baseGUID = getEnvVar("SERVICE_BASE_GUID", "29140B3F-0E69-4C7E-8A35")
 	serviceName = getEnvVar("SERVICE_NAME", appName)
 	servicePlan = getEnvVar("SERVICE_PLAN", "shared")
-	serviceDescription = getEnvVar("SERVICE_DESCRIPTION", "Shared service for " + serviceName)
+	serviceDescription = getEnvVar("SERVICE_DESCRIPTION", "Shared service for "+serviceName)
 	authUser = getEnvVar("SERVICE_AUTH_USER", "")
 	authPassword = getEnvVar("SERVICE_AUTH_PASSWORD", "")
 	if (authUser != "") && (authPassword != "") {
