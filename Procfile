@@ -1,1 +1,1 @@
-web: worlds-simplest-service-broker
+web: envvars-servicebroker

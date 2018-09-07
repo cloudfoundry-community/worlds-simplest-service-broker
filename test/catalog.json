@@ -1,0 +1,26 @@
+{
+  "services": [
+    {
+      "id": "-service-",
+      "name": "",
+      "description": "",
+      "bindable": true,
+      "metadata": {
+        "displayName": "",
+        "imageUrl": "",
+        "longDescription": "",
+        "providerDisplayName": "",
+        "documentationUrl": "",
+        "supportUrl": ""
+      },
+      "plans": [
+        {
+          "id": "-plan-",
+          "name": "",
+          "description": "",
+          "free": true
+        }
+      ]
+    }
+  ]
+}

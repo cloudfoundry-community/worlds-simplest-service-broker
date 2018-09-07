@@ -10,8 +10,8 @@
 [[projects]]
   name = "github.com/cloudfoundry-community/types-cf"
   packages = ["."]
-  revision = "3b45cfff75a3be33a4d186470200bf6e645315e7"
-  version = "v1.3"
+  revision = "0f57b598859da26e2ccd58dde308bc40e67fb25e"
+  source = "github.com/cloudfoundry-community/types-cf"
 
 [[projects]]
   name = "github.com/codegangsta/inject"
@@ -52,6 +52,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9bf62aef7a8199ce721f7a09a96f2f3042ef5897f4e925ca667e7a633e03d2f5"
+  inputs-digest = "aabc0b053186d72dc0d8b817a316587093e259cc1c9cedd9a150680b89367715"
   solver-name = "gps-cdcl"
   solver-version = 1
