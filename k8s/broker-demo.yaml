@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: broker
+  name: broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: broker
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        run: broker
+    spec:
+      containers:
+      - image: cfcommunity/worlds-simplest-service-broker
+        name: broker
+        resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: broker
+  name: broker
+spec:
+  ports:
+  - port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    run: broker
+  type: ClusterIP

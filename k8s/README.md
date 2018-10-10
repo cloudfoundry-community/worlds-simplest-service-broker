@@ -77,3 +77,25 @@ $ eden catalog
 Service Name       Plan Name  Description
 some-service-name  shared     Shared service for some-service-name
 ```
+
+## Deploy from YAML
+
+```plain
+kubectl delete namespaces broker-demo
+kubectl create namespace broker-demo
+kubectl apply -n broker-demo -f k8s/broker-demo.yaml
+```
+
+Stop and restart the port-forward tunnel:
+
+```plain
+kubectl -n broker-demo port-forward service/broker 3000:3000
+```
+
+In the `eden` terminal, confirm it continues to work:
+
+```plain
+$ eden catalog
+Service Name       Plan Name  Description
+some-service-name  shared     Shared service for some-service-name
+```
