@@ -43,23 +43,29 @@ broker   1         1         1            1           1m
 ```
 
 ```plain
-kubectl expose deployment -n broker-demo broker --type NodePort --port 3000 --target-port 3000
+kubectl expose deployment -n broker-demo broker --type ClusterIP --port 3000 --target-port 3000
 ```
 
 ```plain
-kubectl get services -n broker-demo
-NAME     TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-broker   NodePort   10.107.30.44   <none>        3000:32413/TCP   38s
+$ kubectl get services -n broker-demo
+NAME     TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+broker   ClusterIP   10.106.138.185   <none>        3000/TCP   53s
+```
+
+To port foward to the exposed service on port `:3000`:
+
+```plain
+kubectl -n broker-demo port-forward service/broker 3000:3000
 ```
 
 ```plain
-curl localhost:32413/v2/catalog
+curl localhost:3000/v2/catalog
 ```
 
 Explore with `eden`, first setup env vars:
 
 ```plain
-export SB_BROKER_URL=http://localhost:32413
+export SB_BROKER_URL=http://localhost:3000
 export SB_BROKER_USERNAME=
 export SB_BROKER_PASSWORD=
 ```
