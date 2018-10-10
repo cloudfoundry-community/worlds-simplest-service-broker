@@ -96,6 +96,21 @@ In the `eden` terminal, confirm it continues to work:
 
 ```plain
 $ eden catalog
-Service Name       Plan Name  Description
-some-service-name  shared     Shared service for some-service-name
+Service Name  Plan Name  Description
+demo          shared     Shared service for demo
+
+$ eden provision -s demo
+provision:   demo/shared - name: demo-shared-22581631-fc40-40e4-bb8e-35d25b47477f
+
+$ eden bind -i demo-shared-22581631-fc40-40e4-bb8e-35d25b47477f
+Success
+
+Run 'eden credentials -i demo-shared-22581631-fc40-40e4-bb8e-35d25b47477f -b demo-916a6e93-417e-424d-bb9d-b4c89b5e937d' to see credentials
+
+$ eden credentials -i demo-shared-22581631-fc40-40e4-bb8e-35d25b47477f -b demo-916a6e93-417e-424d-bb9d-b4c89b5e937d
+{
+  "port": "40000"
+}
 ```
+
+Note that `{"port": 40000}` is the `$CREDENTIALS` configured in `broker-demo.yaml`.
