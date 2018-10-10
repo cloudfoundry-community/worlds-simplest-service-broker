@@ -37,7 +37,9 @@ export TAGS=simple,shared
 go run main.go
 ```
 
-## Deploy to Cloud Foundry
+## Deploy & integrate with Cloud Foundry
+
+You can both deploy the broker to Cloud Foundry, and then turn around and offer it as a service broker to all other users of that Cloud Foundry (or a different set of Cloud Foundries):
 
 ```plain
 export SERVICE=myservice
@@ -70,6 +72,10 @@ cf restart $APPNAME
 ```
 
 Each application will need rebind and restart/restage to get the new credentials.
+
+### Deploy to Kubernetes
+
+See [k8s/README.md](k8s/README.md) for a readme discussing deployment of the broker to Kubernetes.
 
 ### Basic Authentication
 
