@@ -75,7 +75,7 @@ Each application will need rebind and restart/restage to get the new credentials
 
 ### Deploy to Kubernetes
 
-See [k8s/README.md](k8s/README.md) for a readme discussing deployment of the broker to Kubernetes.
+See [README_KUBERNETES.md](README_KUBERNETES.md) for a readme discussing deployment of the broker to Kubernetes.
 
 ### Basic Authentication
 
