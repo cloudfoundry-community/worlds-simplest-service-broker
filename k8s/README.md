@@ -1,12 +1,14 @@
 # Exploring running broker on Kubernetes
 
-## Namespace
+## Deploy Broker
+
+### Namespace
 
 ```plain
 kubectl create namespace broker-demo
 ```
 
-## Single Pod
+### Single Pod
 
 ```plain
 kubectl run -n broker-demo --generator run-pod/v1 --image cfcommunity/worlds-simplest-service-broker broker
@@ -26,7 +28,7 @@ To delete:
 kubectl -n broker-demo delete pod broker
 ```
 
-## Deployment
+### Deployment
 
 ```plain
 kubectl -n broker-demo run --image cfcommunity/worlds-simplest-service-broker broker --replicas=1 -o yaml --dry-run
@@ -78,7 +80,7 @@ Service Name       Plan Name  Description
 some-service-name  shared     Shared service for some-service-name
 ```
 
-## Deploy from YAML
+### Deploy from YAML
 
 ```plain
 kubectl delete namespaces broker-demo
@@ -114,3 +116,36 @@ $ eden credentials -i demo-shared-22581631-fc40-40e4-bb8e-35d25b47477f -b demo-9
 ```
 
 Note that `{"port": 40000}` is the `$CREDENTIALS` configured in `broker-demo.yaml`.
+
+## Install Service Catalog
+
+Basic Kubernetes does not know anything about service brokers. Instead we need to install the [Service Catalog](https://svc-cat.io) project.
+
+First, [install Helm CLI](https://docs.helm.sh/using_helm/#installing-the-helm-client), install Helm's Tiller into your Kubernetes.
+
+```plain
+helm init
+```
+
+Next, create a cluster role binding `tiller-cluster-admin`:
+
+```plain
+kubectl create clusterrolebinding tiller-cluster-admin \
+    --clusterrole=cluster-admin \
+    --serviceaccount=kube-system:default
+```
+
+And install Service Catalog via Helm:
+
+```plain
+helm install svc-cat/catalog \
+    --name catalog --namespace catalog
+```
+
+Install the [Service Catalog `svcat` CLI](https://svc-cat.io/docs/install/#installing-the-service-catalog-cli), and confirm the Service Catalog APIs are running:
+
+```plain
+$ svcat get brokers
+  NAME   NAMESPACE   URL   STATUS
++------+-----------+-----+--------+
+```
