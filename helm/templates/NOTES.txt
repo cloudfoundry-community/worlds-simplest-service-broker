@@ -17,4 +17,7 @@
   kubectl port-forward $POD_NAME {{ .Values.service.port }}:{{ .Values.service.port }}
 
   curl localhost:{{ .Values.service.port }}/v2/catalog
+
+2. To register broker with Service Catalog:
+    svcat register {{ include "helm.fullname" . }} --url http://{{ include "helm.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}
 {{- end }}
