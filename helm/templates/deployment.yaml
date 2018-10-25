@@ -26,6 +26,17 @@ spec:
           env:
           - name: PORT
             value: "{{ .Values.service.port }}"
+          - name: BASE_GUID
+            value: "{{ .Values.serviceBroker.baseGUID }}"
+          - name: SERVICE_NAME
+            value: "{{ .Values.serviceBroker.class }}"
+          - name: SERVICE_PLAN
+            value: "{{ .Values.serviceBroker.plan }}"
+          - name: FAKE_ASYNC
+            value: "{{ .Values.serviceBroker.fakeAsync }}"
+          - name: CREDENTIALS
+            value: |-
+                {{ .Values.serviceBroker.credentials }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

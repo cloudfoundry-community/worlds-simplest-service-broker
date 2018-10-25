@@ -12,6 +12,16 @@ image:
 nameOverride: ""
 fullnameOverride: ""
 
+# Configure World's Simplest Service Broker
+serviceBroker:
+  baseGUID:    0a6cc65a-6744-48ae
+  class:       some-helm-service-class
+  plan:        shared
+
+  # --set "serviceBroker.credentials=\{\"port\":3333\}"
+  credentials: '{"port":"4000"}'
+  fakeAsync:    "false"
+
 service:
   type: ClusterIP
   port: 3000
