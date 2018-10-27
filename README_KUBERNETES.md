@@ -1,4 +1,4 @@
-# Deploy World's Simplest Service Broker with Helm and install into Service Catalog
+# Deploy with Helm and install into Service Catalog
 
 The World's Simplest Service Broker is packaged as a container image and installable into your Kubernetes cluster as a [Helm](https://helm.sh/) chart.
 
