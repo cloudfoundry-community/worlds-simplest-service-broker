@@ -1,8 +1,13 @@
 # Deploy with Helm and install into Service Catalog
 
-The World's Simplest Service Broker is packaged as a container image and installable into your Kubernetes cluster as a [Helm](https://helm.sh/) chart.
+The World's Simplest Service Broker is packaged as a container image and installable into your Kubernetes cluster as a [Helm](https://helm.sh/) chart, and is installable into your Kubernetes [Service Catalog](https://svc-cat.io/).
 
-It is also installable into your Kubernetes [Service Catalog](https://svc-cat.io/).
+The story of using the Helm chart is broken into two user stories:
+
+1. A service operator who wants to expose its location and credentials to all users of a Kubernetes cluster (or specific namespaces)
+1. A user of Kubernetes (such as an application developer) who wants to access the exposed service
+
+In this walk through we will share an external SMTP email service with the same credentials for anyone who needs to send emails.
 
 ## Install Service Catalog
 
@@ -120,6 +125,8 @@ spec:
 ```
 
 ## Demonstration of broker with Service Catalog
+
+As an application developer you can now also discover the available service class (`smtp`) and its service plan (`shared`), and provision/bind its credentials into your namespace as a Secret.
 
 ```commands
 svcat provision demo --class smtp --plan shared
