@@ -22,6 +22,9 @@ serviceBroker:
   credentials: '{"port":"4000"}'
   fakeAsync:    "false"
 
+  tags:         shared,worlds-simplest-service-broker
+  imageURL:     ""
+
 service:
   type: ClusterIP
   port: 3000

@@ -37,6 +37,10 @@ spec:
           - name: CREDENTIALS
             value: |-
                 {{ .Values.serviceBroker.credentials }}
+          - name: TAGS
+            value: "{{ .Values.serviceBroker.tags }}"
+          - name: IMAGE_URL
+            value: "{{ .Values.serviceBroker.imageURL }}"
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

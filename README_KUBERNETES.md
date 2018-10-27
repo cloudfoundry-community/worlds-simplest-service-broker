@@ -27,6 +27,7 @@ You can run the World's Simple Service Broker multiple times - one for each set 
 helm install ./helm --name email --wait \
     --set "serviceBroker.class=smtp" \
     --set "serviceBroker.plan=shared" \
+    --set "serviceBroker.tags=shared\,email\,smtp" \
     --set "serviceBroker.baseGUID=some-guid" \
     --set "serviceBroker.credentials=\{\"host\":\"mail.authsmtp.com\"\,\"port\":2525\,\"username\":\"ac123456\"\,\"password\":\"special-secret\"\}"
 ```
@@ -81,6 +82,41 @@ $ svcat get brokers
                   NAME                   NAMESPACE                                      URL                                       STATUS
 +--------------------------------------+-----------+----------------------------------------------------------------------------+--------+
   email-worlds-simplest-service-broker               http://email-worlds-simplest-service-broker.default.svc.cluster.local:3000   Ready
+```
+
+To view the available `smtp` service class:
+
+```console
+$ svcat get classes
+  NAME   NAMESPACE         DESCRIPTION
++------+-----------+-------------------------+
+  smtp               Shared service for smtp
+```
+
+We can see the metadata for our service class with the `-o yaml` output:
+
+```console
+$ svcat get class smtp -o yaml
+spec:
+  bindable: true
+  bindingRetrievable: false
+  clusterServiceBrokerName: email-worlds-simplest-service-broker
+  description: Shared service for smtp
+  externalID: some-guid-service-smtp
+  externalMetadata:
+    displayName: smtp
+    documentationUrl: ""
+    imageUrl: ""
+    longDescription: ""
+    providerDisplayName: ""
+    supportUrl: ""
+  externalName: smtp
+  planUpdatable: false
+  tags:
+  - shared
+  - email
+  - smtp
+...
 ```
 
 ## Demonstration of broker with Service Catalog
