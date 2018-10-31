@@ -2,56 +2,42 @@
 
 
 [[projects]]
-  name = "github.com/cloudfoundry-community/go-cfenv"
-  packages = ["."]
-  revision = "f920e9562d5f951cbf11785728f67258c38a10d0"
-  version = "v1.17.0"
-
-[[projects]]
-  name = "github.com/cloudfoundry-community/types-cf"
-  packages = ["."]
-  revision = "3b45cfff75a3be33a4d186470200bf6e645315e7"
-  version = "v1.3"
-
-[[projects]]
-  name = "github.com/codegangsta/inject"
-  packages = ["."]
-  revision = "37d7f8432a3e684eef9b2edece76bdfa6ac85b39"
-  version = "v1.0-rc1"
-
-[[projects]]
-  name = "github.com/go-martini/martini"
-  packages = ["."]
-  revision = "49411a5b646861ad29a6ddd5351717a0a9c49b94"
-  version = "v1.0"
-
-[[projects]]
-  name = "github.com/kr/pretty"
-  packages = ["."]
-  revision = "73f6ac0b30a98e433b289500d779f50c1a6f0712"
-  version = "v0.1.0"
-
-[[projects]]
-  name = "github.com/kr/text"
-  packages = ["."]
-  revision = "e2ffdb16a802fe2bb95e2e35ff34f0e53aeef34f"
-  version = "v0.1.0"
-
-[[projects]]
   branch = "master"
-  name = "github.com/martini-contrib/auth"
+  name = "code.cloudfoundry.org/lager"
   packages = ["."]
-  revision = "fa62c19b7ae87da370242054c8beb11af31d327f"
+  revision = "1a7fb7de44c33d258236e250189099e48a4c7430"
 
 [[projects]]
-  name = "github.com/mitchellh/mapstructure"
+  name = "github.com/gorilla/context"
   packages = ["."]
-  revision = "3536a929edddb9a5b34bd6861dc4a9647cb459fe"
-  version = "v1.1.2"
+  revision = "08b5f424b9271eedf6f9f0ce86cb9396ed337a42"
+  version = "v1.1.1"
+
+[[projects]]
+  name = "github.com/gorilla/mux"
+  packages = ["."]
+  revision = "e3702bed27f0d39777b0b37b664b6280e8ef8fbf"
+  version = "v1.6.2"
+
+[[projects]]
+  branch = "retrievable"
+  name = "github.com/pivotal-cf/brokerapi"
+  packages = [
+    ".",
+    "auth"
+  ]
+  revision = "fa431ac2cea870295c5526eb9303fb4eca1531d4"
+  source = "github.com/drnic/brokerapi"
+
+[[projects]]
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9bf62aef7a8199ce721f7a09a96f2f3042ef5897f4e925ca667e7a633e03d2f5"
+  inputs-digest = "6d5669c783e9a06417a1f15c5bd7c3ea3af0b7caeadc0c05af34e37d03467a00"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -1,3 +1,4 @@
+
 # Gopkg.toml example
 #
 # Refer to https://github.com/golang/dep/blob/master/docs/Gopkg.toml.md
@@ -21,11 +22,29 @@
 
 
 [[constraint]]
-  name = "github.com/cloudfoundry-community/go-cfenv"
-  version = "1.17.0"
+  name = "code.cloudfoundry.org/lager"
+  branch = "master"
 
 [[constraint]]
-  name = "github.com/pivotal-cf/brokerapi"
-  # version = "3.0.3"
-  source = "github.com/drnic/brokerapi"
-  branch = "retrievable"
+  name = "github.com/drewolson/testflight"
+  version = "1.0.0"
+
+[[constraint]]
+  name = "github.com/gorilla/mux"
+  version = "1.6.0"
+
+[[constraint]]
+  name = "github.com/onsi/ginkgo"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/onsi/gomega"
+  branch = "master"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/pborman/uuid"
+
+[[constraint]]
+  name = "github.com/pkg/errors"
+  version = "^0.8.0"
