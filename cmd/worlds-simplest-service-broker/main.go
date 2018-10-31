@@ -23,8 +23,8 @@ func main() {
 	servicebroker := broker.NewBrokerImpl(logger)
 
 	brokerCredentials := brokerapi.BrokerCredentials{
-		Username: "broker",
-		Password: "broker",
+		Username: os.Getenv("AUTH_USER"),
+		Password: os.Getenv("AUTH_PASSWORD"),
 	}
 	brokerAPI := brokerapi.New(servicebroker, logger, brokerCredentials)
 
