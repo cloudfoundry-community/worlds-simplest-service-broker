@@ -23,9 +23,6 @@ _testmain.go
 *.test
 *.prof
 
-# bin
-worlds-simplest-service-broker
-
 # Sublime
 broker.sublime-project
 broker.sublime-workspace

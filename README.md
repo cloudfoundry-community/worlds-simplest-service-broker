@@ -32,11 +32,27 @@ See [README_CLOUDFOUNDRY.md](README_CLOUDFOUNDRY.md) for instructions on configu
 
 ## Build and run locally
 
-```plain
-export BASE_GUID=$(uuid) # or try $(uuidgen) or any GUID that makes you happy
+```shell
+export BASE_GUID=$(uuid)
+# or
+export BASE_GUID=$(uuidgen)
+
 export CREDENTIALS='{"port": "4000", "host": "1.2.3.4"}'
 export SERVICE_NAME=myservice
 export SERVICE_PLAN_NAME=shared
 export TAGS=simple,shared
-go run main.go
+go run cmd/worlds-simplest-service-broker/main.go
+```
+
+Or build and run with Docker, using env vars from above:
+
+```shell
+docker build -t cfcommunity/worlds-simplest-service-broker .
+
+docker run -e BASE_GUID=$BASE_GUID \
+    -e CREDENTIALS=$CREDENTIALS \
+    -e SERVICE_NAME=$SERVICE_NAME \
+    -e SERVICE_PLAN_NAME=$SERVICE_PLAN_NAME \
+    -e TAGS=$TAGS \
+    -p 3000:3000 cfcommunity/worlds-simplest-service-broker
 ```
