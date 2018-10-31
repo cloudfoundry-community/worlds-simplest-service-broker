@@ -21,10 +21,6 @@
 
 
 [[constraint]]
-  name = "github.com/cloudfoundry-community/go-cfenv"
-  version = "1.17.0"
-
-[[constraint]]
   name = "github.com/pivotal-cf/brokerapi"
   # version = "3.0.3"
   source = "github.com/drnic/brokerapi"

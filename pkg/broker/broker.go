@@ -66,7 +66,7 @@ func (bkr *BrokerImpl) Services(ctx context.Context) ([]brokerapi.Service, error
 }
 
 func (bkr *BrokerImpl) Provision(ctx context.Context, instanceID string, details brokerapi.ProvisionDetails, asyncAllowed bool) (brokerapi.ProvisionedServiceSpec, error) {
-	panic("not implemented")
+	return brokerapi.ProvisionedServiceSpec{}, nil
 }
 
 func (bkr *BrokerImpl) Deprovision(ctx context.Context, instanceID string, details brokerapi.DeprovisionDetails, asyncAllowed bool) (brokerapi.DeprovisionServiceSpec, error) {
