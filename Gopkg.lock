@@ -44,10 +44,10 @@
   revision = "fa62c19b7ae87da370242054c8beb11af31d327f"
 
 [[projects]]
-  branch = "master"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
-  revision = "bb74f1db0675b241733089d5a1faa5dd8b0ef57b"
+  revision = "3536a929edddb9a5b34bd6861dc4a9647cb459fe"
+  version = "v1.1.2"
 
 [solve-meta]
   analyzer-name = "dep"
