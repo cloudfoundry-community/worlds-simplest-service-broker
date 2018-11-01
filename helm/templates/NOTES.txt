@@ -19,14 +19,14 @@
   curl localhost:{{ .Values.service.port }}/v2/catalog
 
 2. To register broker with Service Catalog:
-  kubectl create secret generic ignore-basic-auth \
-    --from-literal username=ignoreme \
-    --from-literal password=ignoreme
+  kubectl create secret generic {{ include "helm.fullname" . }}-basic-auth \
+    --from-literal username=broker \
+    --from-literal password=broker
 
   svcat register {{ include "helm.fullname" . }} \
     --url http://{{ include "helm.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }} \
     --scope cluster \
-    --basic-secret ignore-basic-auth
+    --basic-secret {{ include "helm.fullname" . }}-basic-auth
 
   svcat provision demo --class {{ .Values.serviceBroker.class }} --plan {{ .Values.serviceBroker.plan }}
   svcat describe instance demo
