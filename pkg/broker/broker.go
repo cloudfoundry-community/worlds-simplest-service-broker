@@ -11,8 +11,9 @@ import (
 )
 
 type BrokerImpl struct {
-	Logger lager.Logger
-	Config Config
+	Logger    lager.Logger
+	Config    Config
+	Instances map[string]brokerapi.GetInstanceDetailsSpec
 }
 
 type Config struct {
@@ -23,8 +24,10 @@ type Config struct {
 	Tags           string
 	ImageURL       string
 	SysLogDrainURL string
-	FakeAsync      bool
 	Free           bool
+
+	FakeAsync    bool
+	FakeStateful bool
 }
 
 func NewBrokerImpl(logger lager.Logger) (bkr *BrokerImpl) {
@@ -33,7 +36,8 @@ func NewBrokerImpl(logger lager.Logger) (bkr *BrokerImpl) {
 	fmt.Printf("Credentials: %v\n", credentials)
 
 	return &BrokerImpl{
-		Logger: logger,
+		Logger:    logger,
+		Instances: map[string]brokerapi.GetInstanceDetailsSpec{},
 		Config: Config{
 			BaseGUID:    getEnvWithDefault("BASE_GUID", "29140B3F-0E69-4C7E-8A35"),
 			ServiceName: getEnvWithDefault("SERVICE_NAME", "some-service-name"),
@@ -43,7 +47,8 @@ func NewBrokerImpl(logger lager.Logger) (bkr *BrokerImpl) {
 			ImageURL:    os.Getenv("IMAGE_URL"),
 			Free:        true,
 
-			FakeAsync: os.Getenv("FAKE_ASYNC") == "true",
+			FakeAsync:    os.Getenv("FAKE_ASYNC") == "true",
+			FakeStateful: os.Getenv("FAKE_STATEFUL") == "true",
 		},
 	}
 }
@@ -58,10 +63,11 @@ func getEnvWithDefault(key, defaultValue string) string {
 func (bkr *BrokerImpl) Services(ctx context.Context) ([]brokerapi.Service, error) {
 	return []brokerapi.Service{
 		brokerapi.Service{
-			ID:          bkr.Config.BaseGUID + "-service-" + bkr.Config.ServiceName,
-			Name:        bkr.Config.ServiceName,
-			Description: "Shared service for " + bkr.Config.ServiceName,
-			Bindable:    true,
+			ID:                   bkr.Config.BaseGUID + "-service-" + bkr.Config.ServiceName,
+			Name:                 bkr.Config.ServiceName,
+			Description:          "Shared service for " + bkr.Config.ServiceName,
+			Bindable:             true,
+			InstancesRetrievable: bkr.Config.FakeStateful,
 			Metadata: &brokerapi.ServiceMetadata{
 				DisplayName: bkr.Config.ServiceName,
 				ImageUrl:    bkr.Config.ImageURL,
@@ -79,6 +85,11 @@ func (bkr *BrokerImpl) Services(ctx context.Context) ([]brokerapi.Service, error
 }
 
 func (bkr *BrokerImpl) Provision(ctx context.Context, instanceID string, details brokerapi.ProvisionDetails, asyncAllowed bool) (brokerapi.ProvisionedServiceSpec, error) {
+	bkr.Instances[instanceID] = brokerapi.GetInstanceDetailsSpec{
+		ServiceID: details.ServiceID,
+		PlanID:    details.PlanID,
+		// Parameters: details.GetRawParameters(),
+	}
 	return brokerapi.ProvisionedServiceSpec{
 		IsAsync: bkr.Config.FakeAsync,
 	}, nil
@@ -90,8 +101,12 @@ func (bkr *BrokerImpl) Deprovision(ctx context.Context, instanceID string, detai
 	}, nil
 }
 
-func (bkr *BrokerImpl) GetInstance(ctx context.Context, instanceID string) (brokerapi.GetInstanceDetailsSpec, error) {
-	panic("not implemented")
+func (bkr *BrokerImpl) GetInstance(ctx context.Context, instanceID string) (spec brokerapi.GetInstanceDetailsSpec, err error) {
+	if val, ok := bkr.Instances[instanceID]; ok {
+		return val, nil
+	}
+	err = brokerapi.NewFailureResponse(fmt.Errorf("Unknown instance ID %s", instanceID), 404, "get-instance")
+	return
 }
 
 func (bkr *BrokerImpl) Bind(ctx context.Context, instanceID string, bindingID string, details brokerapi.BindDetails, asyncAllowed bool) (brokerapi.Binding, error) {
