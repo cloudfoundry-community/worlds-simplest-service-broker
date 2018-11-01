@@ -9,7 +9,9 @@ ENV BASE_GUID=29140B3F-0E69-4C7E-8A35 \
     SERVICE_NAME=some-service-name \
     SERVICE_PLAN=shared \
     CREDENTIALS='{"port":"4000"}' \
-    FAKE_ASYNC=false
+    TAGS=shared,worlds-simplest-service-broker \
+    FAKE_ASYNC=false \
+    FAKE_STATEFUL=false
 
 RUN apk --no-cache add ca-certificates bash
 WORKDIR /root/

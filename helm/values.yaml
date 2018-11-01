@@ -21,6 +21,7 @@ serviceBroker:
   # --set "serviceBroker.credentials=\{\"port\":3333\}"
   credentials: '{"port":"4000"}'
   fakeAsync:    "false"
+  fakeStateful: "false"
 
   tags:         shared,worlds-simplest-service-broker
   imageURL:     ""
