@@ -115,9 +115,11 @@ func (bkr *BrokerImpl) GetInstance(ctx context.Context, instanceID string) (spec
 }
 
 func (bkr *BrokerImpl) Bind(ctx context.Context, instanceID string, bindingID string, details brokerapi.BindDetails, asyncAllowed bool) (brokerapi.Binding, error) {
+	var parameters interface{}
+	json.Unmarshal(details.GetRawParameters(), &parameters)
 	bkr.Bindings[bindingID] = brokerapi.GetBindingSpec{
 		Credentials: bkr.Config.Credentials,
-		// Parameters: details.GetRawParameters(),
+		Parameters:  parameters,
 	}
 	return brokerapi.Binding{
 		Credentials: bkr.Config.Credentials,
