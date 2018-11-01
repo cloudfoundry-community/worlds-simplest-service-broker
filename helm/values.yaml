@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: cfcommunity/worlds-simplest-service-broker
-  tag: 1.1.1
+  tag: 1.2.0
   pullPolicy: IfNotPresent
 
 nameOverride: ""
