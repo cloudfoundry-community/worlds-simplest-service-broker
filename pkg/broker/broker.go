@@ -29,23 +29,30 @@ type Config struct {
 
 func NewBrokerImpl(logger lager.Logger) (bkr *BrokerImpl) {
 	var credentials interface{}
-	json.Unmarshal([]byte(os.Getenv("CREDENTIALS")), &credentials)
+	json.Unmarshal([]byte(getEnvWithDefault("CREDENTIALS", "{\"port\": \"4000\"}")), &credentials)
 	fmt.Printf("Credentials: %v\n", credentials)
 
 	return &BrokerImpl{
 		Logger: logger,
 		Config: Config{
-			BaseGUID:    os.Getenv("BASE_GUID"),
-			ServiceName: os.Getenv("SERVICE_NAME"),
-			ServicePlan: os.Getenv("SERVICE_PLAN_NAME"),
+			BaseGUID:    getEnvWithDefault("BASE_GUID", "29140B3F-0E69-4C7E-8A35"),
+			ServiceName: getEnvWithDefault("SERVICE_NAME", "some-service-name"),
+			ServicePlan: getEnvWithDefault("SERVICE_PLAN_NAME", "shared"),
 			Credentials: credentials,
-			Tags:        os.Getenv("TAGS"),
+			Tags:        getEnvWithDefault("TAGS", "shared,worlds-simplest-service-broker"),
 			ImageURL:    os.Getenv("IMAGE_URL"),
 			Free:        true,
 
 			FakeAsync: os.Getenv("FAKE_ASYNC") == "true",
 		},
 	}
+}
+
+func getEnvWithDefault(key, defaultValue string) string {
+	if os.Getenv(key) == "" {
+		return defaultValue
+	}
+	return os.Getenv(key)
 }
 
 func (bkr *BrokerImpl) Services(ctx context.Context) ([]brokerapi.Service, error) {
