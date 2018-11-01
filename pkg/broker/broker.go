@@ -70,6 +70,7 @@ func (bkr *BrokerImpl) Services(ctx context.Context) ([]brokerapi.Service, error
 			Description:          "Shared service for " + bkr.Config.ServiceName,
 			Bindable:             true,
 			InstancesRetrievable: bkr.Config.FakeStateful,
+			BindingsRetrievable:  bkr.Config.FakeStateful,
 			Metadata: &brokerapi.ServiceMetadata{
 				DisplayName: bkr.Config.ServiceName,
 				ImageUrl:    bkr.Config.ImageURL,
