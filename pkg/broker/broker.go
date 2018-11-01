@@ -2,6 +2,8 @@ package broker
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"os"
 
 	"code.cloudfoundry.org/lager"
@@ -17,7 +19,7 @@ type Config struct {
 	ServiceName    string
 	ServicePlan    string
 	BaseGUID       string
-	Credentials    string
+	Credentials    interface{}
 	Tags           string
 	ImageURL       string
 	SysLogDrainURL string
@@ -26,13 +28,17 @@ type Config struct {
 }
 
 func NewBrokerImpl(logger lager.Logger) (bkr *BrokerImpl) {
+	var credentials interface{}
+	json.Unmarshal([]byte(os.Getenv("CREDENTIALS")), &credentials)
+	fmt.Printf("Credentials: %v\n", credentials)
+
 	return &BrokerImpl{
 		Logger: logger,
 		Config: Config{
 			BaseGUID:    os.Getenv("BASE_GUID"),
 			ServiceName: os.Getenv("SERVICE_NAME"),
 			ServicePlan: os.Getenv("SERVICE_PLAN_NAME"),
-			Credentials: os.Getenv("CREDENTIALS"),
+			Credentials: credentials,
 			Tags:        os.Getenv("TAGS"),
 			ImageURL:    os.Getenv("IMAGE_URL"),
 			Free:        true,
@@ -66,11 +72,15 @@ func (bkr *BrokerImpl) Services(ctx context.Context) ([]brokerapi.Service, error
 }
 
 func (bkr *BrokerImpl) Provision(ctx context.Context, instanceID string, details brokerapi.ProvisionDetails, asyncAllowed bool) (brokerapi.ProvisionedServiceSpec, error) {
-	return brokerapi.ProvisionedServiceSpec{}, nil
+	return brokerapi.ProvisionedServiceSpec{
+		IsAsync: bkr.Config.FakeAsync,
+	}, nil
 }
 
 func (bkr *BrokerImpl) Deprovision(ctx context.Context, instanceID string, details brokerapi.DeprovisionDetails, asyncAllowed bool) (brokerapi.DeprovisionServiceSpec, error) {
-	panic("not implemented")
+	return brokerapi.DeprovisionServiceSpec{
+		IsAsync: bkr.Config.FakeAsync,
+	}, nil
 }
 
 func (bkr *BrokerImpl) GetInstance(ctx context.Context, instanceID string) (brokerapi.GetInstanceDetailsSpec, error) {
@@ -78,11 +88,13 @@ func (bkr *BrokerImpl) GetInstance(ctx context.Context, instanceID string) (brok
 }
 
 func (bkr *BrokerImpl) Bind(ctx context.Context, instanceID string, bindingID string, details brokerapi.BindDetails, asyncAllowed bool) (brokerapi.Binding, error) {
-	panic("not implemented")
+	return brokerapi.Binding{
+		Credentials: bkr.Config.Credentials,
+	}, nil
 }
 
 func (bkr *BrokerImpl) Unbind(ctx context.Context, instanceID string, bindingID string, details brokerapi.UnbindDetails, asyncAllowed bool) (brokerapi.UnbindSpec, error) {
-	panic("not implemented")
+	return brokerapi.UnbindSpec{}, nil
 }
 
 func (bkr *BrokerImpl) GetBinding(ctx context.Context, instanceID string, bindingID string) (brokerapi.GetBindingSpec, error) {
@@ -90,11 +102,15 @@ func (bkr *BrokerImpl) GetBinding(ctx context.Context, instanceID string, bindin
 }
 
 func (bkr *BrokerImpl) Update(ctx context.Context, instanceID string, details brokerapi.UpdateDetails, asyncAllowed bool) (brokerapi.UpdateServiceSpec, error) {
-	panic("not implemented")
+	return brokerapi.UpdateServiceSpec{
+		IsAsync: bkr.Config.FakeAsync,
+	}, nil
 }
 
 func (bkr *BrokerImpl) LastOperation(ctx context.Context, instanceID string, details brokerapi.PollDetails) (brokerapi.LastOperation, error) {
-	panic("not implemented")
+	return brokerapi.LastOperation{
+		State: brokerapi.Succeeded,
+	}, nil
 }
 
 func (bkr *BrokerImpl) LastBindingOperation(ctx context.Context, instanceID string, bindingID string, details brokerapi.PollDetails) (brokerapi.LastOperation, error) {
