@@ -14,6 +14,7 @@ type BrokerImpl struct {
 	Logger    lager.Logger
 	Config    Config
 	Instances map[string]brokerapi.GetInstanceDetailsSpec
+	Bindings  map[string]brokerapi.GetBindingSpec
 }
 
 type Config struct {
@@ -38,6 +39,7 @@ func NewBrokerImpl(logger lager.Logger) (bkr *BrokerImpl) {
 	return &BrokerImpl{
 		Logger:    logger,
 		Instances: map[string]brokerapi.GetInstanceDetailsSpec{},
+		Bindings:  map[string]brokerapi.GetBindingSpec{},
 		Config: Config{
 			BaseGUID:    getEnvWithDefault("BASE_GUID", "29140B3F-0E69-4C7E-8A35"),
 			ServiceName: getEnvWithDefault("SERVICE_NAME", "some-service-name"),
@@ -110,6 +112,10 @@ func (bkr *BrokerImpl) GetInstance(ctx context.Context, instanceID string) (spec
 }
 
 func (bkr *BrokerImpl) Bind(ctx context.Context, instanceID string, bindingID string, details brokerapi.BindDetails, asyncAllowed bool) (brokerapi.Binding, error) {
+	bkr.Bindings[bindingID] = brokerapi.GetBindingSpec{
+		Credentials: bkr.Config.Credentials,
+		// Parameters: details.GetRawParameters(),
+	}
 	return brokerapi.Binding{
 		Credentials: bkr.Config.Credentials,
 	}, nil
@@ -119,8 +125,12 @@ func (bkr *BrokerImpl) Unbind(ctx context.Context, instanceID string, bindingID 
 	return brokerapi.UnbindSpec{}, nil
 }
 
-func (bkr *BrokerImpl) GetBinding(ctx context.Context, instanceID string, bindingID string) (brokerapi.GetBindingSpec, error) {
-	panic("not implemented")
+func (bkr *BrokerImpl) GetBinding(ctx context.Context, instanceID string, bindingID string) (spec brokerapi.GetBindingSpec, err error) {
+	if val, ok := bkr.Bindings[bindingID]; ok {
+		return val, nil
+	}
+	err = brokerapi.NewFailureResponse(fmt.Errorf("Unknown binding ID %s", bindingID), 404, "get-binding")
+	return
 }
 
 func (bkr *BrokerImpl) Update(ctx context.Context, instanceID string, details brokerapi.UpdateDetails, asyncAllowed bool) (brokerapi.UpdateServiceSpec, error) {
