@@ -34,6 +34,8 @@ spec:
             value: "{{ .Values.serviceBroker.plan }}"
           - name: FAKE_ASYNC
             value: "{{ .Values.serviceBroker.fakeAsync }}"
+          - name: FAKE_STATEFUL
+            value: "{{ .Values.serviceBroker.fakeStateful }}"
           - name: CREDENTIALS
             value: |-
                 {{ .Values.serviceBroker.credentials }}
