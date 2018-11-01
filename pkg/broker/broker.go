@@ -88,10 +88,12 @@ func (bkr *BrokerImpl) Services(ctx context.Context) ([]brokerapi.Service, error
 }
 
 func (bkr *BrokerImpl) Provision(ctx context.Context, instanceID string, details brokerapi.ProvisionDetails, asyncAllowed bool) (brokerapi.ProvisionedServiceSpec, error) {
+	var parameters interface{}
+	json.Unmarshal(details.GetRawParameters(), &parameters)
 	bkr.Instances[instanceID] = brokerapi.GetInstanceDetailsSpec{
-		ServiceID: details.ServiceID,
-		PlanID:    details.PlanID,
-		// Parameters: details.GetRawParameters(),
+		ServiceID:  details.ServiceID,
+		PlanID:     details.PlanID,
+		Parameters: parameters,
 	}
 	return brokerapi.ProvisionedServiceSpec{
 		IsAsync: bkr.Config.FakeAsync,
