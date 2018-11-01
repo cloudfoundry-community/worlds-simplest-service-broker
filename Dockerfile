@@ -11,7 +11,9 @@ ENV BASE_GUID=29140B3F-0E69-4C7E-8A35 \
     CREDENTIALS='{"port":"4000"}' \
     TAGS=shared,worlds-simplest-service-broker \
     FAKE_ASYNC=false \
-    FAKE_STATEFUL=false
+    FAKE_STATEFUL=false \
+    AUTH_USER=broker \
+    AUTH_PASSWORD=broker
 
 RUN apk --no-cache add ca-certificates bash
 WORKDIR /root/

@@ -41,6 +41,8 @@ export CREDENTIALS='{"port": "4000", "host": "1.2.3.4"}'
 export SERVICE_NAME=myservice
 export SERVICE_PLAN_NAME=shared
 export TAGS=simple,shared
+export AUTH_USER=broker
+export AUTH_PASSWORD=broker
 go run cmd/worlds-simplest-service-broker/main.go
 ```
 
@@ -54,5 +56,6 @@ docker run -e BASE_GUID=$BASE_GUID \
     -e SERVICE_NAME=$SERVICE_NAME \
     -e SERVICE_PLAN_NAME=$SERVICE_PLAN_NAME \
     -e TAGS=$TAGS \
+    -e AUTH_USER=broker -e AUTH_PASSWORD=broker \
     -p 3000:3000 cfcommunity/worlds-simplest-service-broker
 ```

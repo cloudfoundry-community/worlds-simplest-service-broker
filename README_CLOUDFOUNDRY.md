@@ -11,6 +11,8 @@ cf set-env $APPNAME CREDENTIALS '{"port": "4000", "host": "1.2.3.4"}'
 cf set-env $APPNAME SERVICE_NAME $SERVICE
 cf set-env $APPNAME SERVICE_PLAN_NAME shared
 cf set-env $APPNAME TAGS simple,shared
+cf set-env $APPNAME AUTH_USER broker
+cf set-env $APPNAME AUTH_PASSWORD broker
 cf env $APPNAME
 cf start $APPNAME
 ```
@@ -19,7 +21,7 @@ To register the service broker (as an admin user):
 
 ```plain
 export SERVICE_URL=$(cf app $APPNAME | grep routes: | awk '{print $2}')
-cf create-service-broker $SERVICE admin admin https://$SERVICE_URL
+cf create-service-broker $SERVICE broker broker https://$SERVICE_URL
 cf enable-service-access $SERVICE
 ```
 
@@ -46,7 +48,7 @@ To do so (of course, change `secret_user` and `secret_password` to something mor
 cf set-env $APPNAME AUTH_USER secret_user
 cf set-env $APPNAME AUTH_PASSWORD secret_password
 cf restart $APPNAME
-cf update-service-broker $SERVICE secret_user secret_password https://$SERVICE_URL
+cf update-service-broker $SERVICE broker broker https://$SERVICE_URL
 ```
 
 ## syslog_drain_url

@@ -43,17 +43,21 @@ spec:
             value: "{{ .Values.serviceBroker.tags }}"
           - name: IMAGE_URL
             value: "{{ .Values.serviceBroker.imageURL }}"
+          - name: AUTH_USER
+            value: broker
+          - name: AUTH_PASSWORD
+            value: broker
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /v2/catalog
+              path: /health
               port: http
           readinessProbe:
             httpGet:
-              path: /v2/catalog
+              path: /health
               port: http
           resources:
 {{ toYaml .Values.resources | indent 12 }}
