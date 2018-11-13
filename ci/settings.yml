@@ -1,0 +1,34 @@
+---
+meta:
+  name:    worlds-simplest-service-broker
+  target:  bucc
+  url:     https://192.168.50.6
+
+  git:
+    email:  ((git-commit-email))
+    name:   ((git-commit-name))
+
+  aws:
+    bucket:      (( grab meta.pipeline ))
+    region_name: us-east-1
+    access_key:  ((aws-access-key))
+    secret_key:  ((aws-secret-key))
+    charts_uri:  s3://helm.starkandwayne.com/charts
+
+  github:
+    owner:  cloudfoundry-community
+    repo:   worlds-simplest-service-broker
+    branch: master
+    private_key:  ((github-private-key))
+    access_token: ((github-access-token))
+
+  dockerhub:
+    username:   ((docker-hub-username))
+    password:   ((docker-hub-password))
+    repository: worlds-simplest-service-broker
+
+  slack:
+    webhook:       ((slack-webhook))
+    username:      ((slack-username))
+    icon:          ((slack-icon-url))
+    channel:       "#worlds-simplest-service-broker"
