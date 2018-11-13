@@ -1,8 +1,9 @@
 ---
 meta:
   name:    worlds-simplest-service-broker
-  target:  bucc
-  url:     https://192.168.50.6
+  target:  ohio-cf
+  url:     https://ci2.starkandwayne.com
+  team:    cfcommunity
 
   git:
     email:  ((git-commit-email))
