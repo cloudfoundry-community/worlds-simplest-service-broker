@@ -26,7 +26,7 @@ meta:
   dockerhub:
     username:   ((docker-hub-username))
     password:   ((docker-hub-password))
-    repository: worlds-simplest-service-broker
+    repository: cfcommunity/worlds-simplest-service-broker
 
   slack:
     webhook:       ((slack-webhook))
