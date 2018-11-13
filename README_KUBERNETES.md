@@ -29,7 +29,11 @@ $ svcat get brokers
 You can run the World's Simple Service Broker multiple times - one for each set of shared credentials.
 
 ```commands
-helm install ./helm --name email --wait \
+helm repo add starkandwayne s3://helm.starkandwayne.com/charts
+helm repo update
+
+helm upgrade --install email starkandwayne/worlds-simplest-service-broker \
+    --wait \
     --set "serviceBroker.class=smtp" \
     --set "serviceBroker.plan=shared" \
     --set "serviceBroker.tags=shared\,email\,smtp" \
