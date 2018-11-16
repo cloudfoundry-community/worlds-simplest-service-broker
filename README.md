@@ -24,7 +24,7 @@ cf restage my-app
 
 ## Deploy to Kubernetes & Integrate with Service Catalog
 
-See [README_KUBERNETES.md](README_KUBERNETES.md) for instructions on configuration & deploying the broker to Kubernetes with Helm, plus instructions for integrating and using the broker with Service Catalog.
+See [helm/worlds-simplest-service-broker/README.md](helm/worlds-simplest-service-broker/README.md) for instructions on configuration & deploying the broker to Kubernetes with Helm, plus instructions for integrating and using the broker with Service Catalog.
 
 ## Deploy to Cloud Foundry & Integrate with Cloud Foundry
 
