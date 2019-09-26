@@ -46,11 +46,31 @@ export AUTH_PASSWORD=broker
 go run cmd/worlds-simplest-service-broker/main.go
 ```
 
-Or build and run with Docker, using env vars from above:
+## Docker
 
-```shell
+Below are sections on building and running with OCI/Docker.
+
+### Cloud Native Buildpacks
+
+You can compile this project and produce an OCI/Docker image with [Cloud Native Buildpacks](https://buildpacks.io/) [`pack` CLI](https://buildpacks.io/docs/install-pack/):
+
+```plain
+pack build cfcommunity/worlds-simplest-service-broker --builder cloudfoundry/cnb:tiny
+```
+
+### Docker Build
+
+The project also contains a `Dockerfile` for `docker build`:
+
+```plain
 docker build -t cfcommunity/worlds-simplest-service-broker .
+```
 
+### Docker Run
+
+Either create the OCI/Docker image as above, or pull down from Docker Hub, and then run using the same env vars from above:
+
+```plain
 docker run -e BASE_GUID=$BASE_GUID \
     -e CREDENTIALS=$CREDENTIALS \
     -e SERVICE_NAME=$SERVICE_NAME \
