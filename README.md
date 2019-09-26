@@ -58,6 +58,10 @@ You can compile this project and produce an OCI/Docker image with [Cloud Native 
 pack build cfcommunity/worlds-simplest-service-broker --builder cloudfoundry/cnb:tiny
 ```
 
+NOTE: the [CI pipeline](https://ci2.starkandwayne.com/teams/starkandwayne/pipelines/worlds-simplest-service-broker/jobs/latest-image/builds/5) uses this method to create OCI/docker images.
+
+Whilst the resulting OCI is larger (`docker images` says `39MB` vs `19MB` for `docker build`), the image includes a lot of metadata about the tools used to build the application, and supports the `pack rebase` command to allow operators to update the base `run` image over time without ever needing the OCI to be rebuilt or redistributed. Read https://buildpacks.io/ for more.
+
 ### Docker Build
 
 The project also contains a `Dockerfile` for `docker build`:

@@ -40,6 +40,9 @@ meta:
     private_key:  (( param "Please generate an SSH Deployment Key for this repo and specify it here" ))
     access_token: (( param "Please generate a Personal Access Token and specify it here" ))
 
+  pack:
+    builder: cloudfoundry/cnb:tiny
+
   dockerhub:
     username:   (( param "Please specify the username for your Dockerhub account" ))
     password:   (( param "Please specify the password for your Dockerhub account" ))
@@ -77,6 +80,7 @@ jobs:
       - put: image-latest
         params:
           build: git
+          builder: (( grab meta.pack.builder ))
         on_failure:
           put: notify
           params:
@@ -294,6 +298,13 @@ resource_types:
     source:
       repository: cfcommunity/slack-notification-resource
 
+  - name: pack-image-resource
+    type: docker-image
+    privileged: true
+    source:
+      repository: bstick12/pack-concourse-resource
+      version: latest
+
 resources:
   - name: git
     type: git
@@ -303,7 +314,7 @@ resources:
       private_key: (( grab meta.github.private_key ))
 
   - name: image-latest
-    type: docker-image
+    type: pack-image-resource
     source:
       .: (( inject meta.dockerhub ))
       tag: latest
