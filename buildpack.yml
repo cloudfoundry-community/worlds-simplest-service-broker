@@ -1,3 +1,2 @@
 go:
-  import-path: "github.com/cloudfoundry-community/worlds-simplest-service-broker"
   targets: ["./cmd/worlds-simplest-service-broker"]
