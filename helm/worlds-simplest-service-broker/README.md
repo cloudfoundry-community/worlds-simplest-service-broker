@@ -49,8 +49,7 @@ $ svcat get brokers
 You can run the World's Simple Service Broker multiple times - one for each set of shared credentials.
 
 ```commands
-helm plugin install https://github.com/hypnoglow/helm-s3.git
-helm repo add starkandwayne s3://helm.starkandwayne.com/charts
+helm repo add starkandwayne https://helm.starkandwayne.com
 helm repo update
 
 helm upgrade --install email starkandwayne/worlds-simplest-service-broker \
