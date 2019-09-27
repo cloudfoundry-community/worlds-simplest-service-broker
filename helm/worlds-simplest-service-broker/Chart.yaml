@@ -3,3 +3,7 @@ description: World's Simplest Service Broker for Service Catalog
 name: worlds-simplest-service-broker
 version: 1.3.3
 icon: https://github.com/cloudfoundry-community/worlds-simplest-service-broker/raw/master/helm/worlds-simplest-service-broker/starkandwayne-logo-blue.png
+maintainers:
+- name: Dr Nic Williams
+  email: drnicwilliams@gmail.com
+  url: https://github.com/drnic

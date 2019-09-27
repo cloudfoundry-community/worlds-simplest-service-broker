@@ -1,0 +1,1 @@
+* add maintainers to helm chart
