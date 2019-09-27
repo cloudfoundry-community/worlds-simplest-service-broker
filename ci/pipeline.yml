@@ -104,9 +104,9 @@ jobs:
       - aggregate:
         - put: image-latest # as 'vX.Y.Z'
           params:
-            tag:        version/number
-            build:   git
-            builder: (( grab meta.pack.builder ))
+            tag_file: version/number
+            build:    git
+            builder:  (( grab meta.pack.builder ))
         - name: package-chart
           task: package-chart
           config:
@@ -305,8 +305,7 @@ resource_types:
     type: docker-image
     privileged: true
     source:
-      repository: bstick12/pack-concourse-resource
-      version: latest
+      repository: drnic/pack-concourse-resource
 
 resources:
   - name: git
