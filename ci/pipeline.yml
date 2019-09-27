@@ -30,7 +30,11 @@ meta:
     region_name: us-east-1
     access_key: (( param "Please set your AWS Access Key ID" ))
     secret_key: (( param "Please set your AWS Secret Key ID" ))
-    charts_uri: (( param "Please set your s3://bucket-name/charts URI" ))
+
+  chartmuseum:
+    uri: https://chartmuseum.starkandwayne.com
+    user: (( param "Please provide basic auth user for chartmuseum" ))
+    pass: (( param "Please provide basic auth password for chartmuseum" ))
 
   github:
     uri:          (( concat "git@github.com:" meta.github.owner "/" meta.github.repo ))
@@ -133,10 +137,9 @@ jobs:
               GIT_EMAIL:      (( grab meta.git.email ))
               GIT_NAME:       (( grab meta.git.name ))
               NOTIFICATION_OUT: notifications
-              AWS_ACCESS_KEY_ID:     (( grab meta.aws.access_key ))
-              AWS_SECRET_ACCESS_KEY: (( grab meta.aws.secret_key ))
-              AWS_DEFAULT_REGION:    (( grab meta.aws.region_name ))
-              HELM_S3_BUCKET_URI:    (( grab meta.aws.charts_uri ))
+              HELM_REPO_URI:         (( grab meta.chartmuseum.uri ))
+              HELM_REPO_USER:        (( grab meta.chartmuseum.user))
+              HELM_REPO_PASS:        (( grab meta.chartmuseum.pass))
 
       - name: upload-git
         put: git

@@ -29,9 +29,9 @@ header() {
 : ${GIT_EMAIL:?required}
 : ${GIT_NAME:?required}
 : ${NOTIFICATION_OUT:?required}
-: ${AWS_ACCESS_KEY_ID:?required}
-: ${AWS_SECRET_ACCESS_KEY:?required}
-: ${HELM_S3_BUCKET_URI:?required}
+: ${HELM_REPO_URI:?required}
+: ${HELM_REPO_USER:?required}
+: ${HELM_REPO_PASS:?required}
 
 : ${HELM_VERSION:=2.14.3}
 
@@ -56,7 +56,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 git clone ${REPO_ROOT} ${REPO_OUT}
 
-pushd ${REPO_OUT}
+(
+cd ${REPO_OUT}
 header "Bump version in Chart.yaml"
 tmpfile=$(mktemp /tmp/chart-yaml.XXXX)
 sed -e "s/^version:.*$/version: ${VERSION}/g" helm/${CHART_NAME}/Chart.yaml > $tmpfile
@@ -66,29 +67,27 @@ header "Bump docker image version in Values.yaml"
 tmpfile=$(mktemp /tmp/chart-yaml.XXXX)
 sed -e "s/^  tag:.*$/  tag: ${VERSION}/g" helm/${CHART_NAME}/values.yaml > $tmpfile
 cp $tmpfile helm/${CHART_NAME}/values.yaml
-popd
+)
 
-header "Install helm"
+header "Install helm CLI"
 curl -LO https://storage.googleapis.com/kubernetes-helm/helm-v${HELM_VERSION}-linux-amd64.tar.gz
 tar xfz helm-*.tar.gz
 mv linux-amd64/helm  /usr/local/bin
 helm version --client
 helm init --client-only
 
-header "Install helm-s3 plugin"
-helm plugin install https://github.com/hypnoglow/helm-s3.git
-
 header "Build helm chart"
 mkdir -p ${RELEASE_ROOT}/artifacts
 helm package ${REPO_OUT}/helm/${CHART_NAME} -d ${RELEASE_ROOT}/artifacts
 
-helm repo add our-repo ${HELM_S3_BUCKET_URI}
+helm repo add our-repo ${HELM_REPO_URI}
 
-header "Uploading helm chart to ${HELM_S3_BUCKET_URI}"
-set -e
-helm s3 push ${RELEASE_ROOT}/artifacts/${CHART_NAME}*.tgz our-repo --force
-set +e
-popd
+header "Uploading helm chart to chartmuseum at ${HELM_REPO_URI}"
+artifact=$(ls ${RELEASE_ROOT}/artifacts/${CHART_NAME}*.tgz)
+# TODO: basic auth
+curl --data-binary "@${artifact}" \
+  -u "${HELM_REPO_USER}:${HELM_REPO_PASS}" \
+  ${HELM_REPO_URI}/api/charts
 
 header "Update git repo with final release..."
 if [[ -z $(git config --global user.email) ]]; then
@@ -102,12 +101,13 @@ echo "v${VERSION}"                 > ${RELEASE_ROOT}/tag
 echo "v${VERSION}"                 > ${RELEASE_ROOT}/name
 mv ${REPO_OUT}/ci/release_notes.md   ${RELEASE_ROOT}/notes.md
 
-pushd $REPO_OUT
+(
+cd $REPO_OUT
 git merge --no-edit ${BRANCH}
 git add -A
 git status
 git commit -m "release v${VERSION}"
-popd
+)
 
 cat > ${NOTIFICATION_OUT:-notifications}/message <<EOS
 New ${CHART_NAME} v${VERSION} released. <https://github.com/${GITHUB_OWNER}/${CHART_NAME}/releases/tag/v${VERSION}|Release notes>.
