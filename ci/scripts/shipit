@@ -84,7 +84,6 @@ helm repo add our-repo ${HELM_REPO_URI}
 
 header "Uploading helm chart to chartmuseum at ${HELM_REPO_URI}"
 artifact=$(ls ${RELEASE_ROOT}/artifacts/${CHART_NAME}*.tgz)
-# TODO: basic auth
 curl --data-binary "@${artifact}" \
   -u "${HELM_REPO_USER}:${HELM_REPO_PASS}" \
   ${HELM_REPO_URI}/api/charts
