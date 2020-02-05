@@ -32,7 +32,7 @@ meta:
     secret_key: (( param "Please set your AWS Secret Key ID" ))
 
   chartmuseum:
-    uri: https://chartmuseum.starkandwayne.com
+    uri: https://helm.starkandwayne.com
     user: (( param "Please provide basic auth user for chartmuseum" ))
     pass: (( param "Please provide basic auth password for chartmuseum" ))
 
